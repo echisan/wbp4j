@@ -1,5 +1,5 @@
 # wbp4j 
-微博图床Java API ( weibo picture bed api for java
+微博图床Java API
 
 [![](https://jitpack.io/v/echisan/wbp4j.svg)](https://jitpack.io/#echisan/wbp4j)
 
