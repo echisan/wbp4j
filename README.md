@@ -57,3 +57,30 @@ ImageInfo{
   small='//wx4.sinaimg.cn/thumbnail/7fa15162gy1fsayytifkuj203903bglr.jpg'
 }
 ```
+
+## Spring中使用
+
+```java
+@Bean
+public WbpUpload wbpUpload(){
+    return new WbpUploadBuilder().setDev(true)
+            .setAccount("username","password")
+            .build();
+}
+```
+
+```java
+@RestController
+public class HelloWbpController {
+
+    @Autowired
+    private WbpUpload wbpUpload;
+
+    @RequestMapping("/wbp")
+    public String helloWbp() throws IOException {
+        ImageInfo imageInfo = wbpUpload.upload("F:\\example.jpg");
+        return imageInfo.toString();
+    }
+}
+```
+
