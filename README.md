@@ -34,15 +34,21 @@
 
 ## 使用
 
+### 直接使用
+
 ```java
-WbpUpload wbpUpload = new WbpUploadBuilder().setAccount("username","password").build();
-// 参数传入文件地址
-ImageInfo imageInfo = wbpUpload.upload("F:\\img.jpg");
-// 或者传入文件对象
-wbpUpload.upload(file);
-// 又或者直接传入图片的base64
-wbpUpload.uploadB64(b64str);
+WbpLogin.login("username", "password");
+ImageInfo imageInfo = new WbpUpload().upload("F:\\example.jpg");
 ```
+
+### 使用builder
+
+```java
+WbpUpload wbpUpload = new WbpUploadBuilder().setDev(true).setAccount("username","password").build();
+ImageInfo imageInfo = wbpUpload.upload("filename");
+```
+
+目前upload支持的参数 `文件路径`, `文件对象`, `图片的Base64(需调用wbpUpload.uploadB64())`
 
 结果
 
