@@ -1,11 +1,11 @@
-package cn.echisan.wpb4j;
+package cn.echisan.wbp4j;
 
-import cn.echisan.wpb4j.Entity.PreLogin;
-import cn.echisan.wpb4j.exception.Wbp4jException;
-import cn.echisan.wpb4j.utils.CookieHolder;
-import cn.echisan.wpb4j.utils.RSAEncodeUtils;
-import cn.echisan.wpb4j.utils.WbpRequest;
-import cn.echisan.wpb4j.utils.WbpResponse;
+import cn.echisan.wbp4j.Entity.PreLogin;
+import cn.echisan.wbp4j.exception.Wbp4jException;
+import cn.echisan.wbp4j.utils.CookieHolder;
+import cn.echisan.wbp4j.utils.RSAEncodeUtils;
+import cn.echisan.wbp4j.utils.WbpRequest;
+import cn.echisan.wbp4j.utils.WbpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
 import org.slf4j.Logger;
@@ -41,12 +41,12 @@ public class WbpLogin {
      */
     private static final String loginUrl = "https://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.19)";
 
-    private PreLogin preLogin(String username) throws IOException {
+    private static PreLogin preLogin(String username) throws IOException {
         WbpRequest wbpRequest = new WbpRequest();
         String base64Username = Base64.getEncoder().encodeToString(username.getBytes());
         String params = "entry=weibo&su=" + base64Username + "MTIzNDU2&rsakt=mod&checkpin=1&client=ssologin.js(v1.4.19)&_=";
         String url = preLoginUrl + params + System.currentTimeMillis();
-        logger.info("preLogin url: {}", url);
+//        logger.info("preLogin url: {}", url);
         WbpResponse wbpResponse = wbpRequest.doGet(url);
         ObjectMapper objectMapper = new ObjectMapper();
         PreLogin preLogin = null;
@@ -58,7 +58,7 @@ public class WbpLogin {
         return preLogin;
     }
 
-    public void login(String username, String password) throws IOException,
+    public static void login(String username, String password) throws IOException,
             NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
             BadPaddingException, InvalidKeyException, InvalidKeySpecException, Wbp4jException {
 
@@ -108,7 +108,6 @@ public class WbpLogin {
         // 获取cookie
         String cookie = getCookie(wbpResponse.getHeaders());
         CookieHolder.setCookies(cookie);
-        System.out.println(cookie);
         logger.info("登陆成功！");
 
     }

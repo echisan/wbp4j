@@ -1,6 +1,6 @@
-package cn.echisan.wpb4j.Entity;
+package cn.echisan.wbp4j.Entity;
 
-import cn.echisan.wpb4j.Entity.upload.Data;
+import cn.echisan.wbp4j.Entity.upload.Data;
 
 /**
  * Created by echisan on 2018/6/14

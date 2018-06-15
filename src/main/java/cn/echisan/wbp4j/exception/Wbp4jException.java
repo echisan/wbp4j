@@ -1,4 +1,4 @@
-package cn.echisan.wpb4j.exception;
+package cn.echisan.wbp4j.exception;
 
 /**
  * Created by echisan on 2018/6/14

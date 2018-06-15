@@ -1,10 +1,8 @@
-package cn.echisan.wpb4j.utils;
+package cn.echisan.wbp4j.utils;
 
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 public class CookieHolderTest {
 

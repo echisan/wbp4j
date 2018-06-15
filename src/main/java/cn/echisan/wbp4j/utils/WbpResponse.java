@@ -1,4 +1,4 @@
-package cn.echisan.wpb4j.utils;
+package cn.echisan.wbp4j.utils;
 
 import org.apache.http.Header;
 

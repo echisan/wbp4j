@@ -1,11 +1,11 @@
-package cn.echisan.wpb4j;
+package cn.echisan.wbp4j;
 
-import cn.echisan.wpb4j.Entity.ImageInfo;
-import cn.echisan.wpb4j.Entity.UploadResp;
-import cn.echisan.wpb4j.Entity.upload.Pic_1;
-import cn.echisan.wpb4j.exception.Wbp4jException;
-import cn.echisan.wpb4j.utils.WbpRequest;
-import cn.echisan.wpb4j.utils.WbpResponse;
+import cn.echisan.wbp4j.Entity.ImageInfo;
+import cn.echisan.wbp4j.Entity.UploadResp;
+import cn.echisan.wbp4j.Entity.upload.Pic_1;
+import cn.echisan.wbp4j.exception.Wbp4jException;
+import cn.echisan.wbp4j.utils.WbpRequest;
+import cn.echisan.wbp4j.utils.WbpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

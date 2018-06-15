@@ -1,8 +1,8 @@
 package cn.echisan;
 
-import cn.echisan.wpb4j.Entity.PreLogin;
-import cn.echisan.wpb4j.utils.WbpRequest;
-import cn.echisan.wpb4j.utils.WbpResponse;
+import cn.echisan.wbp4j.Entity.PreLogin;
+import cn.echisan.wbp4j.utils.WbpRequest;
+import cn.echisan.wbp4j.utils.WbpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.slf4j.Logger;

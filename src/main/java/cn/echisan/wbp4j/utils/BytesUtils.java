@@ -1,4 +1,4 @@
-package cn.echisan.wpb4j.utils;
+package cn.echisan.wbp4j.utils;
 
 /**
  * Created by echisan on 2018/6/13

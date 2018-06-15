@@ -1,4 +1,4 @@
-package cn.echisan.wpb4j.Entity;
+package cn.echisan.wbp4j.Entity;
 
 /**
  * Created by echisan on 2018/6/14

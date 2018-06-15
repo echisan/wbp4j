@@ -1,6 +1,6 @@
-package cn.echisan.wpb4j.utils;
+package cn.echisan.wbp4j.utils;
 
-import cn.echisan.wpb4j.exception.Wbp4jException;
+import cn.echisan.wbp4j.exception.Wbp4jException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class CookieHolder {
         String cookie_file_name = cookieFileName == null ? DEFAULT_COOKIE_FILE_NAME : cookieFileName;
         File file = new File(BASE_PATH + cookie_file_name);
         if (file.exists()) {
-            logger.info("find cookie file : " + file.getAbsolutePath()+file.getName());
+            logger.info("find cookie file : " + file.getAbsolutePath());
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             StringBuilder sb = new StringBuilder();
             String temp;

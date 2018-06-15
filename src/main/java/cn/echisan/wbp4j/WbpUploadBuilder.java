@@ -1,7 +1,9 @@
-package cn.echisan.wpb4j;
+package cn.echisan.wbp4j;
 
-import cn.echisan.wpb4j.exception.Wbp4jException;
-import cn.echisan.wpb4j.utils.CookieHolder;
+import cn.echisan.wbp4j.exception.Wbp4jException;
+import cn.echisan.wbp4j.utils.CookieHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -16,6 +18,8 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class WbpUploadBuilder {
 
+    private static final Logger logger = LoggerFactory.getLogger(WbpUploadBuilder.class);
+
     private String username;
     private String password;
     private String cookieFileName;
@@ -27,13 +31,10 @@ public class WbpUploadBuilder {
      */
     private boolean dev = true;
 
-    public WbpUploadBuilder() {
-    }
-
     public WbpUploadBuilder setAccount(String username, String password) {
         this.username = username;
         this.password = password;
-        return this;
+        return new WbpUploadBuilder();
     }
 
     public WbpUploadBuilder setCookieFileName(String cookieFileName) {
@@ -52,8 +53,10 @@ public class WbpUploadBuilder {
 
     private WbpUpload devMode(){
         if (!CookieHolder.exist()){
+            logger.info("cookie file not found,will do login.");
             doLogin();
         }
+        logger.info("cookie file found!!");
         return new WbpUpload();
     }
 
@@ -67,7 +70,7 @@ public class WbpUploadBuilder {
             throw new Wbp4jException("username and password can not be null!");
         }
         try {
-            new WbpLogin().login(username, password);
+            WbpLogin.login(username, password);
         } catch (IOException | NoSuchPaddingException | NoSuchAlgorithmException |
                 IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException |
                 InvalidKeyException e) {
