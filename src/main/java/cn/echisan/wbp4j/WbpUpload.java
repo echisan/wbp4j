@@ -4,8 +4,7 @@ import cn.echisan.wbp4j.Entity.ImageInfo;
 import cn.echisan.wbp4j.Entity.UploadResp;
 import cn.echisan.wbp4j.Entity.upload.Pic_1;
 import cn.echisan.wbp4j.exception.Wbp4jException;
-import cn.echisan.wbp4j.utils.WbpRequest;
-import cn.echisan.wbp4j.utils.WbpResponse;
+import cn.echisan.wbp4j.utils.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -27,7 +28,25 @@ public class WbpUpload {
     private static final String uploadUrl = "http://picupload.service.weibo.com/interface/pic_upload.php?" +
             "ori=1&mime=image%2Fjpeg&data=base64&url=0&markpos=1&logo=&nick=0&marks=1&app=miniblog";
 
-    public WbpUpload() {
+    public WbpUpload(String username, String password) {
+        this(Collections.singletonList(new Account(username,password)));
+    }
+
+    public WbpUpload(List<Account> accounts){
+        if (!CookieHolder.exist()){
+            for (Account account : accounts){
+                // 如果登陆成功
+                if (WbpLogin.login(account.getUsername(), account.getPassword())) {
+                    break;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        AccountHolder.setAccounts(accounts);
     }
 
     /**
@@ -62,7 +81,7 @@ public class WbpUpload {
      * @return ImageInfo
      * @throws IOException IOException
      */
-    public ImageInfo uploadB64(String base64Img) throws IOException {
+    public ImageInfo uploadB64(String base64Img) throws IOException, Wbp4jException {
         WbpRequest wbpRequest = new WbpRequest();
         WbpResponse wbpResponse = wbpRequest.doPost(uploadUrl, base64Img);
 
@@ -77,8 +96,20 @@ public class WbpUpload {
             throw new Wbp4jException("上传失败,返回了个奇怪的东西,可能是网络连接失败,"+e.getMessage());
         }
 
+        int ret = uploadResp.getData().getPics().getPic_1().getRet();
+
+        // 如果ret=-1 可能是cookies过期了
+        if (ret == -1) {
+            logger.error("未登录或cookie已过期, 正重新登录");
+            boolean login = WbpLogin.login();
+            if (login){
+                return uploadB64(base64Img);
+            }
+            return null;
+        }
+
         // 如果上传失败
-        if (uploadResp.getData().getPics().getPic_1().getRet() != 1) {
+        if (ret != 1) {
             logger.error("图片上传失败,我也不知道什么原因, " + uploadResp.toString());
             return null;
         }
