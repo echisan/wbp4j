@@ -4,9 +4,8 @@ import cn.echisan.wbp4j.Entity.PreLogin;
 import cn.echisan.wbp4j.utils.WbpRequest;
 import cn.echisan.wbp4j.utils.WbpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -15,7 +14,7 @@ import java.io.IOException;
  */
 public class WbpRequestTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(WbpRequestTest.class);
+    private static final Logger logger = Logger.getLogger(WbpRequestTest.class);
 
     @Test
     public void doGet() throws IOException {

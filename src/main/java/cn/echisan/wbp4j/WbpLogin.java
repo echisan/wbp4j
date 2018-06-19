@@ -5,8 +5,7 @@ import cn.echisan.wbp4j.exception.Wbp4jException;
 import cn.echisan.wbp4j.utils.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -17,17 +16,14 @@ import java.net.URLDecoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by echisan on 2018/6/13
  */
 public class WbpLogin {
 
-    private static final Logger logger = LoggerFactory.getLogger(WbpLogin.class);
+    private static final Logger logger = Logger.getLogger(WbpLogin.class);
 
     /**
      * 预登陆url
@@ -44,29 +40,24 @@ public class WbpLogin {
         String base64Username = Base64.getEncoder().encodeToString(username.getBytes());
         String params = "entry=weibo&su=" + base64Username + "MTIzNDU2&rsakt=mod&checkpin=1&client=ssologin.js(v1.4.19)&_=";
         String url = preLoginUrl + params + System.currentTimeMillis();
-//        logger.info("preLogin url: {}", url);
         WbpResponse wbpResponse = wbpRequest.doGet(url);
         ObjectMapper objectMapper = new ObjectMapper();
         PreLogin preLogin = null;
         try {
-            logger.debug("pre login response info : \n {}",wbpResponse.getBody());
+            logger.debug("pre login response info : \n " + wbpResponse.getBody());
             preLogin = objectMapper.readValue(wbpResponse.getBody(), PreLogin.class);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new Wbp4jException("预登陆失败,可能返回了一些奇怪的东西导致无法解析.:" + e.getMessage());
         }
         return preLogin;
     }
 
-    public static boolean login(String username, String password) {
+    private static void login(String username, String password) throws Wbp4jException, IOException {
 
         PreLogin preLogin = null;
-        try {
-            preLogin = preLogin(username);
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("预登陆失败");
-            return false;
-        }
+        preLogin = preLogin(username);
+        logger.info("预登陆成功!");
         // 根据微博加密js中密码拼接的方法
         String pwd = preLogin.getServertime() + "\t" + preLogin.getNonce() + "\n" + password;
 
@@ -87,12 +78,12 @@ public class WbpLogin {
         map.put("service", "miniblog");
         try {
             map.put("sp", RSAEncodeUtils.encode(pwd, preLogin.getPubkey(), "10001"));
+            logger.info("密码加密成功!");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                 InvalidKeySpecException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
-            logger.error("密码加密失败");
-            return false;
+            logger.error("密码加密失败", new Wbp4jException());
         }
         map.put("sr", "1920*1080");
         map.put("su", Base64.getEncoder().encodeToString(username.getBytes()));
@@ -107,10 +98,9 @@ public class WbpLogin {
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("请求失败，可能cookie读取不到，也可能是其他原因," + e.getMessage());
-            return false;
         }
 
-        String body = wbpResponse.getBody();
+        String body = Objects.requireNonNull(wbpResponse).getBody();
         String location = getLocation(body);
         String[] split = location.split("&");
         String reason = "";
@@ -120,36 +110,41 @@ public class WbpLogin {
                 reason = s.substring(7);
                 try {
                     reason = URLDecoder.decode(reason, "GBK");
-                    logger.error("登陆失败，原因：" + reason);
+                    logger.error("登陆失败，原因：" + reason, new Wbp4jException());
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                     logger.error("无法解析该原因");
                 }
-                return false;
             }
         }
 
         // 这里就登陆成功了
+        logger.info("登陆成功！");
         // 获取cookie
         String cookie = getCookie(wbpResponse.getHeaders());
         try {
             CookieHolder.setCookies(cookie);
+            logger.info("写入cookie缓存成功!缓存地址[" + CookieHolder.getCookiesFile() + "]");
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error("写入cookie缓存失败");
-            return false;
+            logger.error("写入cookie缓存失败", new Exception());
         }
-        logger.info("登陆成功！");
-        return true;
     }
 
+    public static void login() throws Wbp4jException {
 
-    public static boolean login() {
+        // 先将缓存文件删除了
+        CookieHolder.deleteCookieCache();
         List<Account> accounts = AccountHolder.getAccounts();
-        for (Account account : accounts){
+        for (Account account : accounts) {
             // 如果登陆成功就溜了，登陆失败就继续循环
-            if (WbpLogin.login(account.getUsername(),account.getPassword())){
-                return true;
+            logger.debug("正在登陆,微博账号:[" + account.getUsername() + "]");
+            try {
+                WbpLogin.login(account.getUsername(), account.getPassword());
+                return;
+            } catch (Wbp4jException | IOException e) {
+                e.printStackTrace();
+                logger.info("微博账号:[" + account.getUsername() + "]登陆失败");
             }
             try {
                 Thread.sleep(300);
@@ -157,7 +152,6 @@ public class WbpLogin {
                 e.printStackTrace();
             }
         }
-        // 如果还没成功
         throw new Wbp4jException("登陆都失败了，没辙了");
     }
 

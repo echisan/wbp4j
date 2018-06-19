@@ -10,6 +10,7 @@ import java.util.Arrays;
  */
 public class WbpResponse {
 
+    private int statusCode;
     private Header[] headers;
     private String body;
 
@@ -29,10 +30,19 @@ public class WbpResponse {
         this.body = body;
     }
 
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     @Override
     public String toString() {
         return "WbpResponse{" +
-                "headers=" + Arrays.toString(headers) +
+                "statusCode=" + statusCode +
+                ", headers=" + Arrays.toString(headers) +
                 ", body='" + body + '\'' +
                 '}';
     }

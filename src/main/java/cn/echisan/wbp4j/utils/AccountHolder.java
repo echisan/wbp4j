@@ -9,7 +9,7 @@ public class AccountHolder {
 
     private static List<Account> accounts;
 
-    public static void setAccounts(List<Account> accounts) {
+    public static synchronized void setAccounts(List<Account> accounts) {
         AccountHolder.accounts = accounts;
     }
 

@@ -12,8 +12,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.Map;
@@ -23,7 +22,7 @@ import java.util.Map;
  */
 public class WbpRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(WbpRequest.class);
+    private static final Logger logger = Logger.getLogger(WbpRequest.class);
 
     private HttpClientBuilder httpClientBuilder;
     private WbpResponse wbpResponse;
@@ -59,7 +58,6 @@ public class WbpRequest {
         // set headers,cookie
         httpPost.setHeader("Host","picupload.service.weibo.com");
         httpPost.setHeader("Cookie",CookieHolder.getCookies());
-//        logger.info("upload request cookie: \n {}", httpPost.getHeaders("Cookie"));
         httpPost.setHeader("Origin","https://weibo.com/");
         httpPost.setHeader("Referer","https://weibo.com/");
 
@@ -78,6 +76,10 @@ public class WbpRequest {
         CloseableHttpResponse response = httpClient.execute(httpRequest);
         Header[] allHeaders = response.getAllHeaders();
         this.wbpResponse.setHeaders(allHeaders);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        this.wbpResponse.setStatusCode(statusCode);
+        logger.info("resultCode:"+this.wbpResponse.getStatusCode());
 
         HttpEntity responseEntity = response.getEntity();
         if (responseEntity.isStreaming()){
@@ -102,6 +104,7 @@ public class WbpRequest {
         httpPost.setEntity(httpEntity);
 
         CloseableHttpResponse response = httpClient.execute(httpPost);
+
         Header[] allHeaders = response.getAllHeaders();
         this.wbpResponse.setHeaders(allHeaders);
 
@@ -109,7 +112,6 @@ public class WbpRequest {
         if (responseEntity.isStreaming()){
             setBody(responseEntity.getContent());
         }
-
         httpClient.close();
         response.close();
 
