@@ -20,4 +20,16 @@ public class AccountHolder {
     public static boolean isEmpty(){
         return accounts.isEmpty();
     }
+
+    public static synchronized void addAccount(Account account){
+        accounts.add(account);
+    }
+
+    public static synchronized void addAccounts(List<Account> accountList){
+        accounts.addAll(accountList);
+    }
+
+    public static synchronized void removeAccounts(){
+        accounts.clear();
+    }
 }
