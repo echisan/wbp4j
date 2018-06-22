@@ -4,10 +4,14 @@
 [![](https://jitpack.io/v/echisan/wbp4j.svg)](https://jitpack.io/#echisan/wbp4j)
 
 # 简介
+个人的一些思路
+
+https://echisan.cn/article/15
 
 这是个使用了微博图床接口的上传图片的api
 
 - 支持cookie过期重新登录
+
 
 ## Maven
 
