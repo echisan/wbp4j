@@ -10,7 +10,7 @@ https://echisan.cn/article/15
 
 这是个使用了微博图床接口的上传图片的api
 
-- 支持cookie过期重新登录
+- 支持cookie过期自动登录
 
 
 ## Maven
