@@ -113,8 +113,8 @@ public class CookieHolder {
         throw new Wbp4jException("非开发模式不对cookie进行缓存，操作失败");
     }
 
-    public static void enableCache(boolean enableCache) {
-        CookieHolder.enableCache = enableCache;
+    public static void enableCache(boolean enable) {
+        enableCache = enable;
     }
 
     public static boolean isEnableCache(){

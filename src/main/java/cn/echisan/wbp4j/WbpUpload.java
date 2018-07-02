@@ -159,8 +159,8 @@ public class WbpUpload {
             return this;
         }
 
-        public Builder setDevMode(boolean devMode) {
-            this.devMode = devMode;
+        public Builder setDevMode(boolean dev) {
+            devMode = dev;
             return this;
         }
 

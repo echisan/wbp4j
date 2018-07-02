@@ -4,8 +4,14 @@
 [![](https://jitpack.io/v/echisan/wbp4j.svg)](https://jitpack.io/#echisan/wbp4j)
 
 # 简介
+个人的一些思路
+
+https://echisan.cn/article/15
 
 这是个使用了微博图床接口的上传图片的api
+
+- 支持cookie过期自动登录
+
 
 ## Maven
 
@@ -26,7 +32,7 @@
 <dependency>
     <groupId>com.github.echisan</groupId>
     <artifactId>wbp4j</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -34,21 +40,12 @@
 
 ## 使用
 
-### 直接使用
-
 ```java
-WbpLogin.login("username", "password");
-ImageInfo imageInfo = new WbpUpload().upload("F:\\example.jpg");
-```
-
-### 使用builder
-
-```java
-WbpUpload wbpUpload = new WbpUploadBuilder().setDev(true).setAccount("username","password").build();
+WbpUpload wbpUpload = WbpUpload.builder().setSinaAccount("username","pwd").build();
 ImageInfo imageInfo = wbpUpload.upload("filename");
 ```
 
-目前upload支持的参数 `文件路径`, `文件对象`, `图片的Base64(需调用wbpUpload.uploadB64())`
+目前upload支持的参数 `文件路径`, `文件对象`, `图片的Base64(需调用wbpUpload.uploadB64())`,`bytes`
 
 结果
 
@@ -69,9 +66,7 @@ ImageInfo{
 ```java
 @Bean
 public WbpUpload wbpUpload(){
-    return new WbpUploadBuilder().setDev(true)
-            .setAccount("username","password")
-            .build();
+    return WbpUpload.builder().setSinaAccount("username","pwd").build();
 }
 ```
 
@@ -85,6 +80,12 @@ public class HelloWbpController {
     @RequestMapping("/wbp")
     public String helloWbp() throws IOException {
         ImageInfo imageInfo = wbpUpload.upload("F:\\example.jpg");
+        return imageInfo.toString();
+    }
+    
+    @RequestMapping("/wbp2")
+    public String helloWbp(@RequestPart MultipartFile file) throws IOException {
+        ImageInfo imageInfo = wbpUpload.upload(file.getBytes());
         return imageInfo.toString();
     }
 }
