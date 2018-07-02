@@ -124,7 +124,9 @@ public class WbpLogin {
         String cookie = getCookie(wbpResponse.getHeaders());
         try {
             CookieHolder.setCookies(cookie);
-            logger.info("写入cookie缓存成功!缓存地址[" + CookieHolder.getCookiesFile() + "]");
+            if (CookieHolder.isEnableCache()){
+                logger.info("写入cookie缓存成功!缓存地址[" + CookieHolder.getCookiesFile() + "]");
+            }
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("写入cookie缓存失败", new Exception());

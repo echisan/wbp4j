@@ -134,6 +134,7 @@ public class WbpUpload {
         private List<Account> accountList = null;
         private String cookieFileName = null;
         private boolean cleanCookieCache = false;
+        private boolean devMode = false;
 
         Builder() {
         }
@@ -155,6 +156,11 @@ public class WbpUpload {
 
         public Builder cleanCookieCache(boolean isClean) {
             cleanCookieCache = isClean;
+            return this;
+        }
+
+        public Builder setDevMode(boolean devMode) {
+            this.devMode = devMode;
             return this;
         }
 
@@ -184,6 +190,10 @@ public class WbpUpload {
             }
             if (cleanCookieCache){
                 CookieHolder.deleteCookieCache();
+            }
+            if (devMode){
+                CookieHolder.enableCache(true);
+                logger.info("当前模式为开发模式，将对cookie进行缓存，在开发环境时请务必关闭！");
             }
             if (requireLogin){
                 WbpLogin.login();

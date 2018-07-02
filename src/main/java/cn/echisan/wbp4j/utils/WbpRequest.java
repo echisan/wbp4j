@@ -36,19 +36,7 @@ public class WbpRequest {
         CloseableHttpClient httpClient = httpClientBuilder.build();
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeaders(getRequestHeader());
-
-        CloseableHttpResponse response = httpClient.execute(httpGet);
-
-        Header[] allHeaders = response.getAllHeaders();
-        this.wbpResponse.setHeaders(allHeaders);
-
-        HttpEntity entity = response.getEntity();
-        if (entity.isStreaming()) {
-            setBody(entity.getContent());
-        }
-        // 关闭流
-        response.close();
-        httpClient.close();
+        doRequest(httpClient, httpGet);
         return this.wbpResponse;
     }
 
