@@ -10,10 +10,11 @@ public class WbpUploadTest {
     @Test
     public void upload() throws IOException {
 
-        WbpUpload wbpUpload = WbpUpload.builder().
-                setSinaAccount("","")
+        WbpUpload wbpUpload = WbpUpload.builder(true)
+                .setDevMode(true)
+                .setSinaAccount("","")
                 .build();
-        ImageInfo upload = wbpUpload.upload("");
+        ImageInfo upload = wbpUpload.upload("F:\\桌面\\734111297235572746.jpg");
         System.out.println(upload);
     }
 }

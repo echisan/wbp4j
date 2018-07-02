@@ -118,8 +118,8 @@ public class WbpUpload {
         return base64Image;
     }
 
-    public static Builder builder(){
-        return new Builder();
+    public static Builder builder(boolean devMode){
+        return new Builder().setDevMode(devMode);
     }
 
 
@@ -159,8 +159,8 @@ public class WbpUpload {
             return this;
         }
 
-        public Builder setDevMode(boolean dev) {
-            devMode = dev;
+        public Builder setDevMode(boolean devMode) {
+            this.devMode = devMode;
             return this;
         }
 
@@ -177,24 +177,29 @@ public class WbpUpload {
             if (accountList != null) {
                 AccountHolder.setAccounts(accountList);
             }
-            if (cookieFileName != null) {
-                File file = new File(CookieHolder.getCookiesPath() + cookieFileName);
-                if (!file.exists() && !file.isFile()) {
-                    requireLogin = true;
-                }
-            } else {
-                boolean exist = CookieHolder.exist();
-                if (!exist) {
-                    requireLogin = true;
-                }
-            }
-            if (cleanCookieCache){
-                CookieHolder.deleteCookieCache();
-            }
+
             if (devMode){
                 CookieHolder.enableCache(true);
-                logger.info("当前模式为开发模式，将对cookie进行缓存，在开发环境时请务必关闭！");
+                if (cookieFileName != null) {
+
+                    File file = new File(CookieHolder.getCookiesPath() + cookieFileName);
+                    if (!file.exists() && !file.isFile()) {
+                        requireLogin = true;
+                    }
+                } else {
+                    boolean exist = CookieHolder.exist();
+                    if (!exist) {
+                        requireLogin = true;
+                    }
+                }
+                if (cleanCookieCache){
+                    CookieHolder.deleteCookieCache();
+                }
+                logger.info("当前模式为开发模式，将对cookie进行缓存，在生产环境时请务必关闭！");
+            }else {
+                requireLogin = true;
             }
+
             if (requireLogin){
                 WbpLogin.login();
             }
