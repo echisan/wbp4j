@@ -4,7 +4,8 @@ import cn.echisan.wbp4j.Entity.ImageInfo;
 import cn.echisan.wbp4j.Entity.UploadResp;
 import cn.echisan.wbp4j.Entity.upload.Pic_1;
 import cn.echisan.wbp4j.exception.Wbp4jException;
-import cn.echisan.wbp4j.utils.*;
+import cn.echisan.wbp4j.utils.WbpRequest;
+import cn.echisan.wbp4j.utils.WbpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 
@@ -13,9 +14,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by echisan on 2018/6/13
  */
@@ -25,6 +23,7 @@ public class WbpUpload {
 
     private static final String uploadUrl = "http://picupload.service.weibo.com/interface/pic_upload.php?" +
             "ori=1&mime=image%2Fjpeg&data=base64&url=0&markpos=1&logo=&nick=0&marks=1&app=miniblog";
+    private static int reloginFlag = 0;
 
     public WbpUpload() {
     }
@@ -81,8 +80,12 @@ public class WbpUpload {
         // 如果ret=-1 可能是cookies过期了
         if (ret == -1) {
             logger.error("未登录或cookie已过期, 正重新登录");
-            WbpLogin.login();
-            return uploadB64(base64Img);
+            if (reloginFlag == 0){
+                WbpLogin.reLogin();
+                reloginFlag = 1;
+                return uploadB64(base64Img);
+            }
+            throw new Wbp4jException("重新登陆失败，不再进行登陆了");
         }
 
         // 如果上传失败
@@ -118,8 +121,8 @@ public class WbpUpload {
         return base64Image;
     }
 
-    public static Builder builder(boolean devMode){
-        return new Builder().setDevMode(devMode);
+    public static Builder builder() {
+        return new Builder();
     }
 
 
@@ -130,78 +133,59 @@ public class WbpUpload {
 
     public static class Builder {
 
-        private Account account = null;
-        private List<Account> accountList = null;
+        private String username = null;
+        private String password = null;
         private String cookieFileName = null;
-        private boolean cleanCookieCache = false;
-        private boolean devMode = false;
+        private String cookiePath = null;
+        private boolean enableCache = true;
 
         Builder() {
         }
 
-        public Builder setSinaAccount(String username, String password) {
-            account = new Account(username, password);
+        public Builder setCookiePath(String cookiePath) {
+            this.cookiePath = cookiePath;
             return this;
         }
 
-        public Builder setSinaAccounts(List<Account> accounts) {
-            accountList = accounts;
+        public Builder setEnableCache(boolean enableCache) {
+            this.enableCache = enableCache;
             return this;
         }
 
-        public Builder setCookieFileName(String cookieName) {
-            cookieFileName = cookieName;
+        public Builder setUsername(String username) {
+            this.username = username;
             return this;
         }
 
-        public Builder cleanCookieCache(boolean isClean) {
-            cleanCookieCache = isClean;
+        public Builder setPassword(String password) {
+            this.password = password;
             return this;
         }
 
-        public Builder setDevMode(boolean devMode) {
-            this.devMode = devMode;
+        public Builder setCookieFileName(String cookieFileName) {
+            this.cookieFileName = cookieFileName;
             return this;
         }
 
         public WbpUpload build() throws IOException {
 
-            boolean requireLogin = false;
-
-            if (account == null && accountList == null) {
-                throw new IllegalArgumentException("必须至少设置一个微博账号!");
-            }
-            if (account != null) {
-                AccountHolder.setAccounts(Collections.singletonList(account));
-            }
-            if (accountList != null) {
-                AccountHolder.setAccounts(accountList);
-            }
-
-            if (devMode){
-                CookieHolder.enableCache(true);
+            if (enableCache) {
                 if (cookieFileName != null) {
-
-                    File file = new File(CookieHolder.getCookiesPath() + cookieFileName);
-                    if (!file.exists() && !file.isFile()) {
-                        requireLogin = true;
-                    }
-                } else {
-                    boolean exist = CookieHolder.exist();
-                    if (!exist) {
-                        requireLogin = true;
-                    }
+                    CookieHolder.setCookieFileName(cookieFileName);
                 }
-                if (cleanCookieCache){
-                    CookieHolder.deleteCookieCache();
+                if (cookiePath != null) {
+                    CookieHolder.setCookiePath(cookiePath);
                 }
-                logger.info("当前模式为开发模式，将对cookie进行缓存，在生产环境时请务必关闭！");
-            }else {
-                requireLogin = true;
             }
-
-            if (requireLogin){
-                WbpLogin.login();
+            if (username!=null && password!=null){
+                WbpLogin.setUSERNAME(username);
+                WbpLogin.setPASSWORD(password);
+            } else {
+                throw new IllegalArgumentException("username 或 password 不能为空!");
+            }
+            CookieHolder.setEnableCache(enableCache);
+            if (!CookieHolder.hasCookieCache()){
+                WbpLogin.login(username,password);
             }
             return new WbpUpload();
         }

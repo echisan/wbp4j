@@ -2,7 +2,9 @@ package cn.echisan.wbp4j;
 
 import cn.echisan.wbp4j.Entity.PreLogin;
 import cn.echisan.wbp4j.exception.Wbp4jException;
-import cn.echisan.wbp4j.utils.*;
+import cn.echisan.wbp4j.utils.RSAEncodeUtils;
+import cn.echisan.wbp4j.utils.WbpRequest;
+import cn.echisan.wbp4j.utils.WbpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
 import org.apache.log4j.Logger;
@@ -16,12 +18,15 @@ import java.net.URLDecoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by echisan on 2018/6/13
  */
-public class WbpLogin {
+class WbpLogin {
 
     private static final Logger logger = Logger.getLogger(WbpLogin.class);
 
@@ -34,6 +39,9 @@ public class WbpLogin {
      * 登陆url
      */
     private static final String loginUrl = "https://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.19)";
+
+    private static String USERNAME = "";
+    private static String PASSWORD = "";
 
     private static PreLogin preLogin(String username) throws IOException {
         WbpRequest wbpRequest = new WbpRequest();
@@ -53,7 +61,19 @@ public class WbpLogin {
         return preLogin;
     }
 
-    private static void login(String username, String password) throws Wbp4jException, IOException {
+    /**
+     * 重新登陆，获取新的cookie
+     */
+    public static void reLogin() throws IOException {
+        if (USERNAME != null && PASSWORD != null) {
+            logger.debug("username:" + USERNAME + " password:" + PASSWORD);
+            login(USERNAME, PASSWORD);
+        }else {
+            throw new Wbp4jException("内存中不存在用户名密码，重新登陆失败");
+        }
+    }
+
+    public static void login(String username, String password) throws Wbp4jException, IOException {
 
         PreLogin preLogin = null;
         preLogin = preLogin(username);
@@ -123,38 +143,12 @@ public class WbpLogin {
         // 获取cookie
         String cookie = getCookie(wbpResponse.getHeaders());
         try {
-            CookieHolder.setCookies(cookie);
-            if (CookieHolder.isEnableCache()){
-                logger.info("写入cookie缓存成功!缓存地址[" + CookieHolder.getCookiesFile() + "]");
-            }
+            CookieHolder.setCOOKIE(cookie);
+            logger.info("写入cookie缓存成功!缓存地址[" + CookieHolder.getCookieFilePathAndName() + "]");
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error("写入cookie缓存失败", new Exception());
+            logger.error("写入cookie缓存失败", new IOException());
         }
-    }
-
-    public static void login() throws Wbp4jException {
-
-        // 先将缓存文件删除了
-        CookieHolder.deleteCookieCache();
-        List<Account> accounts = AccountHolder.getAccounts();
-        for (Account account : accounts) {
-            // 如果登陆成功就溜了，登陆失败就继续循环
-            logger.debug("正在登陆,微博账号:[" + account.getUsername() + "]");
-            try {
-                WbpLogin.login(account.getUsername(), account.getPassword());
-                return;
-            } catch (Wbp4jException | IOException e) {
-                e.printStackTrace();
-                logger.info("微博账号:[" + account.getUsername() + "]登陆失败");
-            }
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        throw new Wbp4jException("登陆都失败了，没辙了");
     }
 
     private static String getLocation(String responseHtml) {
@@ -176,5 +170,21 @@ public class WbpLogin {
         }
         String cookieStr = cookie.toString();
         return cookieStr.substring(0, cookieStr.length() - 1);
+    }
+
+    public static String getUSERNAME() {
+        return USERNAME;
+    }
+
+    public static void setUSERNAME(String USERNAME) {
+        WbpLogin.USERNAME = USERNAME;
+    }
+
+    public static String getPASSWORD() {
+        return PASSWORD;
+    }
+
+    public static void setPASSWORD(String PASSWORD) {
+        WbpLogin.PASSWORD = PASSWORD;
     }
 }

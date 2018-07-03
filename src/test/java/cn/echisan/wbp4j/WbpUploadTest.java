@@ -10,9 +10,10 @@ public class WbpUploadTest {
     @Test
     public void upload() throws IOException {
 
-        WbpUpload wbpUpload = WbpUpload.builder(true)
-                .setDevMode(true)
-                .setSinaAccount("","")
+        WbpUpload wbpUpload = WbpUpload.builder()
+                .setUsername("")
+                .setPassword("")
+                .setCookiePath("F:\\桌面\\")
                 .build();
         ImageInfo upload = wbpUpload.upload("F:\\桌面\\734111297235572746.jpg");
         System.out.println(upload);

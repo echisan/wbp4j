@@ -1,5 +1,6 @@
 package cn.echisan.wbp4j.utils;
 
+import cn.echisan.wbp4j.CookieHolder;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -45,7 +46,7 @@ public class WbpRequest {
         HttpPost httpPost = new HttpPost(url);
         // set headers,cookie
         httpPost.setHeader("Host","picupload.service.weibo.com");
-        httpPost.setHeader("Cookie",CookieHolder.getCookies());
+        httpPost.setHeader("Cookie",CookieHolder.COOKIE());
         httpPost.setHeader("Origin","https://weibo.com/");
         httpPost.setHeader("Referer","https://weibo.com/");
 
