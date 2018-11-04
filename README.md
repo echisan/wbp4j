@@ -1,4 +1,4 @@
-# wbp4j 
+# wbp4j （重构ing...）
 微博图床Java API
 
 [![](https://jitpack.io/v/echisan/wbp4j.svg)](https://jitpack.io/#echisan/wbp4j)
