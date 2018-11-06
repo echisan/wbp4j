@@ -45,7 +45,7 @@ class WbpUploadRequest implements UploadRequest {
     // 结束时间
     private static volatile long endTime = 0;
 
-    public WbpUploadRequest(WbpHttpRequest wbpHttpRequest, String username, String password) {
+    private WbpUploadRequest(WbpHttpRequest wbpHttpRequest, String username, String password) {
         this.wbpHttpRequest = wbpHttpRequest;
         initImageExtensionSet();
         USERNAME = username;
@@ -91,7 +91,6 @@ class WbpUploadRequest implements UploadRequest {
 
         // 检查返回的json数据
         String s = parseBodyJson(httpResponse.getBody());
-        System.out.println("\n json:::::" + s);
         UploadResp uploadResp = JSON.parseObject(s, UploadResp.class);
 
         int retCode = uploadResp.getData().getPics().getPic_1().getRet();
