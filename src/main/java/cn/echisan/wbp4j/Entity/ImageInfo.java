@@ -20,14 +20,23 @@ public class ImageInfo {
     // 缩略图
     private String small;
 
-    public ImageInfo(String pid, Integer width, Integer height, Integer size) {
+    public ImageInfo() {
+    }
+
+    public ImageInfo(String pid,
+                     Integer width,
+                     Integer height,
+                     Integer size,
+                     String large,
+                     String middle,
+                     String small) {
         this.pid = pid;
-        this.large = "//wx4.sinaimg.cn/large/" + pid + ".jpg";
-        this.middle = "//wx4.sinaimg.cn/mw690/" + pid + ".jpg";
-        this.small = "//wx4.sinaimg.cn/thumbnail/" + pid + ".jpg";
         this.width = width;
         this.height = height;
         this.size = size;
+        this.large = large;
+        this.middle = middle;
+        this.small = small;
     }
 
     public String getPid() {
