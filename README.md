@@ -1,6 +1,8 @@
 # wbp4j （重构ing...）
 微博图床Java API
 
+# 重构接近完成(2018.11.06),文档日后再说好了
+
 [![](https://jitpack.io/v/echisan/wbp4j.svg)](https://jitpack.io/#echisan/wbp4j)
 
 # 简介
