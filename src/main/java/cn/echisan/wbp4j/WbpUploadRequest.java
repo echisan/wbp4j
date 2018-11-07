@@ -183,7 +183,7 @@ class WbpUploadRequest implements UploadRequest {
             // 将重登状态重设为0
             tryLoginCount.set(0);
             // 存入cookie
-            CookieContext.getInstance().saveCookie(cookie);
+            CookieContext.getInstance().setCOOKIE(cookie);
         } else {
             throw new LoginFailedException("login failed,reason: " + wbpHttpResponse.getBody());
         }

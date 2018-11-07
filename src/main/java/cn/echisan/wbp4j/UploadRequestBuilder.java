@@ -11,6 +11,7 @@ public class UploadRequestBuilder {
     private String password;
     private String cookieCacheName;
     private long tryLoginTime = 0;
+    private String cookieCachePath;
 
     public UploadRequestBuilder setAcount(String username, String password) {
         this.username = username;
@@ -28,6 +29,11 @@ public class UploadRequestBuilder {
         return this;
     }
 
+    public UploadRequestBuilder setCookieCacheFilePath(String path){
+        this.cookieCachePath = path;
+        return this;
+    }
+
     public WbpUploadRequest build() {
         WbpHttpRequest request = new DefaultWbpHttpRequest();
         if (username == null) {
@@ -39,6 +45,9 @@ public class UploadRequestBuilder {
         WbpUploadRequest uploadRequest = new WbpUploadRequest(request, this.username, this.password);
         if (cookieCacheName != null) {
             CookieContext.defaultCookieFileName = this.cookieCacheName;
+        }
+        if (cookieCachePath != null){
+            CookieContext.finalCookieFilePath = this.cookieCachePath;
         }
         if (tryLoginTime != 0) {
             WbpUploadRequest.tryLoginTime = this.tryLoginTime;

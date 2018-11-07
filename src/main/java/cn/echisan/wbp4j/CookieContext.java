@@ -15,7 +15,9 @@ public class CookieContext implements CookieCacheable {
     private static volatile CookieContext context = null;
     private static final Object lock = new Object();
     private volatile String COOKIE = null;
-    protected static String defaultCookieFileName = "wbp-cookie-cache.txt";
+    protected static String defaultCookieFileName = "wbp-cookie-cache";
+    private static final String cacheFileExtension = ".txt";
+    protected static String finalCookieFilePath;
 
     private CookieContext() {
     }
@@ -25,6 +27,7 @@ public class CookieContext implements CookieCacheable {
             synchronized (lock) {
                 if (context == null) {
                     context = new CookieContext();
+                    finalCookieFilePath = getFinalCookiePath();
                 } else {
                     return context;
                 }
@@ -51,18 +54,7 @@ public class CookieContext implements CookieCacheable {
 
     @Override
     public void saveCookie(String cookie) throws IOException {
-        String path;
-        URL resourceAsURL = cookieContextClassLoader.getResource(defaultCookieFileName);
-        if (resourceAsURL == null) {
-            resourceAsURL = cookieContextClassLoader.getResource("");
-            path = resourceAsURL + defaultCookieFileName;
-            if (path.startsWith("file:")) {
-                path = path.replace("file:", "");
-            }
-        } else {
-            path = resourceAsURL.getPath();
-        }
-        File file = new File(path);
+        File file = new File(finalCookieFilePath);
         if (!file.exists()) {
             boolean mkdir = file.createNewFile();
             if (!mkdir) {
@@ -77,13 +69,9 @@ public class CookieContext implements CookieCacheable {
 
     @Override
     public String readCookie() throws IOException {
-        URL resourceAsURL = cookieContextClassLoader.getResource(defaultCookieFileName);
-        if (resourceAsURL == null) {
-            return null;
-        }
-        File file = new File(resourceAsURL.getPath());
+        File file = new File(finalCookieFilePath);
         if (!file.exists()) {
-            logger.warn("无法读取cookie，缓存文件不存在", new IOException());
+            logger.warn("无法读取cookie，缓存文件不存在");
             return null;
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -94,5 +82,28 @@ public class CookieContext implements CookieCacheable {
         }
         br.close();
         return sb.toString();
+    }
+
+    private static String getFinalCookiePath() {
+        String name = defaultCookieFileName + cacheFileExtension;
+        URL resourceAsURL = cookieContextClassLoader.getResource(name);
+        String path;
+        if (resourceAsURL == null) {
+            resourceAsURL = cookieContextClassLoader.getResource("");
+            assert resourceAsURL != null;
+            path = resourceAsURL.getPath();
+            if (path.startsWith("file:")) {
+                path = path.replace("file:/", "");
+            }
+        } else {
+            path = resourceAsURL.getPath();
+        }
+        int i = path.indexOf("!/");
+        if (i > 0){
+            path = path.substring(0, i);
+        }
+        path = path + name;
+        System.out.println(path);
+        return path;
     }
 }
