@@ -38,12 +38,12 @@ public class ImageInfoBuilder {
         return this.imageInfo;
     }
 
-    public ImageInfo buildWithoutUrl(){
+    public ImageInfo buildWithoutUrl() {
         return this.imageInfo;
     }
 
     private String getPicUrl(int i, String size) {
-        String ex = extension == null?"jpg":extension;
+        String ex = extension == null ? "jpg" : extension;
         return String.format(picUrl, i, size, this.imageInfo.getPid() + "." + ex);
     }
 

@@ -9,20 +9,20 @@ import java.net.URL;
 public class Resources {
     private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
 
-    Resources(){
+    Resources() {
     }
 
-    public static ClassLoader getDefaultClassLoader(){
+    public static ClassLoader getDefaultClassLoader() {
         return classLoaderWrapper.defaultClassLoader;
     }
 
-    public static void setDefaultClassLoader(ClassLoader classLoader){
+    public static void setDefaultClassLoader(ClassLoader classLoader) {
         classLoaderWrapper.defaultClassLoader = classLoader;
     }
 
     public static URL getResourceURL(ClassLoader classLoader, String resource) throws IOException {
-        URL url = classLoaderWrapper.getResourceAsURL(resource,classLoader);
-        if (url == null){
+        URL url = classLoaderWrapper.getResourceAsURL(resource, classLoader);
+        if (url == null) {
             throw new IOException("Could not find resource" + resource);
         }
         return url;

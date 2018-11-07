@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class DefaultWbpHttpResponse implements WbpHttpResponse {
     private int statusCode;
-    private Map<String,String> header;
+    private Map<String, String> header;
     private String body;
 
     public DefaultWbpHttpResponse(int statusCode, Map<String, String> header, String body) {

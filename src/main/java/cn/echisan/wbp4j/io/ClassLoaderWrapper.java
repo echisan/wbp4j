@@ -19,15 +19,15 @@ public class ClassLoaderWrapper {
         }
     }
 
-    URL getResourceAsURL(String resource){
-        return getResourceAsURL(resource,getClassLoaders(null));
+    URL getResourceAsURL(String resource) {
+        return getResourceAsURL(resource, getClassLoaders(null));
     }
 
-    URL getResourceAsURL(String resource, ClassLoader classLoader){
-        return getResourceAsURL(resource,getClassLoaders(classLoader));
+    URL getResourceAsURL(String resource, ClassLoader classLoader) {
+        return getResourceAsURL(resource, getClassLoaders(classLoader));
     }
 
-    URL getResourceAsURL(String resource, ClassLoader[] classLoader){
+    URL getResourceAsURL(String resource, ClassLoader[] classLoader) {
         URL url;
         for (ClassLoader cl : classLoader) {
 
@@ -49,8 +49,8 @@ public class ClassLoaderWrapper {
         return null;
     }
 
-    InputStream getResourceAsStream(String resource){
-        return getResourceAsStream(resource,getClassLoaders(null));
+    InputStream getResourceAsStream(String resource) {
+        return getResourceAsStream(resource, getClassLoaders(null));
     }
 
     InputStream getResourceAsStream(String resource, ClassLoader[] classLoader) {

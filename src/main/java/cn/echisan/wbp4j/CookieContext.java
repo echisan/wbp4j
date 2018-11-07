@@ -1,5 +1,6 @@
-package cn.echisan.wbp4j.io;
+package cn.echisan.wbp4j;
 
+import cn.echisan.wbp4j.io.CookieCacheable;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -14,7 +15,7 @@ public class CookieContext implements CookieCacheable {
     private static volatile CookieContext context = null;
     private static final Object lock = new Object();
     private volatile String COOKIE = null;
-    private String defaultCookieFileName = "wbp-cookie-cache.txt";
+    protected static String defaultCookieFileName = "wbp-cookie-cache.txt";
 
     private CookieContext() {
     }

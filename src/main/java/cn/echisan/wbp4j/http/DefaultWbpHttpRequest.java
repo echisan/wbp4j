@@ -42,7 +42,7 @@ public class DefaultWbpHttpRequest implements WbpHttpRequest {
         if (params != null) {
             url = url + "?" + convertParams(params);
         }
-        System.out.println(url);
+
         URL u = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) u.openConnection();
         connection.setRequestMethod("GET");
@@ -127,9 +127,9 @@ public class DefaultWbpHttpRequest implements WbpHttpRequest {
         }
         String END_LINE = "\r\n";
         String TWO = "--";
-        String boundary = "==="+System.currentTimeMillis()+"===";
-        String contentType = "multipart/form-data; boundary="+boundary;
-        connection.setRequestProperty("Content-Type",contentType);
+        String boundary = "===" + System.currentTimeMillis() + "===";
+        String contentType = "multipart/form-data; boundary=" + boundary;
+        connection.setRequestProperty("Content-Type", contentType);
         StringBuilder bodyBulider = new StringBuilder();
         bodyBulider.append(TWO).append(boundary).append(END_LINE)
                 .append("Content-Disposition: form-data; name=\"b64_data\"")
@@ -140,7 +140,7 @@ public class DefaultWbpHttpRequest implements WbpHttpRequest {
         connection.connect();
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-        System.out.println(bodyBulider.toString());
+
         bw.write(bodyBulider.toString());
         bw.flush();
         bw.close();

@@ -8,7 +8,6 @@ import cn.echisan.wbp4j.exception.LoginFailedException;
 import cn.echisan.wbp4j.exception.Wbp4jException;
 import cn.echisan.wbp4j.http.WbpHttpRequest;
 import cn.echisan.wbp4j.http.WbpHttpResponse;
-import cn.echisan.wbp4j.io.CookieContext;
 import cn.echisan.wbp4j.utils.RSAEncodeUtils;
 import com.alibaba.fastjson.JSON;
 import org.apache.log4j.Logger;
@@ -40,12 +39,13 @@ class WbpUploadRequest implements UploadRequest {
     private static final Set<String> imageExtension = new HashSet<>();
     // 重连次数
     private static AtomicInteger tryLoginCount = new AtomicInteger(0);
-    // 重连等待时间，每次重连失败后，增加10分钟的重连等待时间
-    private static volatile long tryLoginTime = 10 * 60 * 1000;
+    // 重连等待时间，每次重连失败后，重连等待时间为 = 重连次数 * 重连等待时间
+    private static final long defaultTryLoginTime = 2 * 60 * 1000;
+    protected static volatile long tryLoginTime = defaultTryLoginTime;
     // 结束时间
     private static volatile long endTime = 0;
 
-    private WbpUploadRequest(WbpHttpRequest wbpHttpRequest, String username, String password) {
+    protected WbpUploadRequest(WbpHttpRequest wbpHttpRequest, String username, String password) {
         this.wbpHttpRequest = wbpHttpRequest;
         initImageExtensionSet();
         USERNAME = username;
@@ -100,7 +100,7 @@ class WbpUploadRequest implements UploadRequest {
                 return upload(image);
             } else {
                 uploadResponse.setResult(UploadResponse.ResultStatus.FAILED);
-                uploadResponse.setMessage("上传失败，大概是cookie过期了，尝试重新登陆失败，目前是总共第" + tryLoginCount.get() + "登陆，" +
+                uploadResponse.setMessage("上传失败，大概是cookie过期了，尝试重新登陆失败，目前是第" + tryLoginCount.get() + "登陆，" +
                         "距离下次登陆时间为:" + new Date(endTime));
                 return uploadResponse;
             }
@@ -147,12 +147,12 @@ class WbpUploadRequest implements UploadRequest {
         params.put("service", "miniblog");
         try {
             params.put("sp", RSAEncodeUtils.encode(pwd, preLogin.getPubkey(), "10001"));
-            logger.info("密码加密成功!");
+            logger.info("正在登陆...密码加密成功!");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                 InvalidKeySpecException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
-            logger.error("密码加密失败", new LoginFailedException());
+            logger.error("登陆失败，原因：密码加密失败", new LoginFailedException());
         }
         params.put("sr", "1920*1080");
         params.put("su", Base64.getEncoder().encodeToString(USERNAME.getBytes()));
@@ -161,6 +161,7 @@ class WbpUploadRequest implements UploadRequest {
         params.put("vsnf", "1");
 
         WbpHttpResponse wbpHttpResponse = wbpHttpRequest.doPost(loginUrl, getLoginHeader(), params);
+
         if (wbpHttpResponse.getStatusCode() == HTTP_OK) {
 
             String cookie = wbpHttpResponse.getHeader().get("set-cookie");
@@ -173,7 +174,14 @@ class WbpUploadRequest implements UploadRequest {
             if (cookie == null) {
                 throw new LoginFailedException("登陆失败，无法获取cookie");
             }
-            logger.info("登陆成功,cookie:--->\n\n" + cookie + "\n");
+            if (cookie.length() < 50) {
+                throw new LoginFailedException("登陆失败，大概是用户名密码不正确大概是需要输入验证码了。" +
+                        "由于不知道为何读取返回的body时候乱码，无法解决，所以无法具体说出什么原因。");
+            }
+            logger.debug("登陆成功,cookie:--->\n\n" + cookie + "\n");
+            logger.info("登陆成功！获取cookie成功!");
+            // 将重登状态重设为0
+            tryLoginCount.set(0);
             // 存入cookie
             CookieContext.getInstance().saveCookie(cookie);
         } else {
@@ -240,11 +248,11 @@ class WbpUploadRequest implements UploadRequest {
     }
 
     private synchronized boolean tryReLogin() throws IOException, LoginFailedException {
-        long currentTime = System.currentTimeMillis();
+        final long currentTime = System.currentTimeMillis();
         // 先判断是否已经到了冷却时间
         if (endTime != 0 && endTime < currentTime) {
-            tryLoginCount.addAndGet(1);
-            endTime = System.currentTimeMillis() + tryLoginTime;
+            int i = tryLoginCount.addAndGet(1);
+            endTime = System.currentTimeMillis() + tryLoginTime * i;
             login();
             return true;
         }
@@ -261,11 +269,11 @@ class WbpUploadRequest implements UploadRequest {
     private Map<String, String> getLoginHeader() {
         Map<String, String> header = new HashMap<>();
         header.put("Referer", "https://weibo.com/");
-        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36");
+        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/63.0");
         header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        header.put("Accept", "text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8");
         header.put("Accept-Encoding", "gzip, deflate, br");
-        header.put("Accept-Language", "zh-CN,zh;q=0.9");
+        header.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
         return header;
     }
 
