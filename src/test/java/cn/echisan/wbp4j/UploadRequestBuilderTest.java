@@ -31,7 +31,8 @@ public class UploadRequestBuilderTest {
     @Test
     public void path() throws IOException {
         String path = "C:/Users/E73AN/Desktop/wbp4j/target/test-classes/mycache11541583158662.txt";
-        File file = new File(path);
-        file.createNewFile();
+        int i = path.lastIndexOf("/");
+        String substring = path.substring(0, i+1);
+        System.out.println(substring);
     }
 }

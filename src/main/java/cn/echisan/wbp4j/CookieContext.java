@@ -85,25 +85,30 @@ public class CookieContext implements CookieCacheable {
     }
 
     private static String getFinalCookiePath() {
-        String name = defaultCookieFileName + cacheFileExtension;
-        URL resourceAsURL = cookieContextClassLoader.getResource(name);
-        String path;
-        if (resourceAsURL == null) {
-            resourceAsURL = cookieContextClassLoader.getResource("");
-            assert resourceAsURL != null;
-            path = resourceAsURL.getPath();
-            if (path.startsWith("file:")) {
-                path = path.replace("file:/", "");
+        if (finalCookieFilePath == null) {
+            String name = defaultCookieFileName + cacheFileExtension;
+            URL resourceAsURL = cookieContextClassLoader.getResource(name);
+            String path;
+            if (resourceAsURL == null) {
+                resourceAsURL = cookieContextClassLoader.getResource("");
+                assert resourceAsURL != null;
+                path = resourceAsURL.getPath();
+                if (path.startsWith("file:")) {
+                    path = path.replace("file:/", "");
+                }
+            } else {
+                path = resourceAsURL.getPath();
             }
-        } else {
-            path = resourceAsURL.getPath();
+            int i = path.indexOf("!/");
+            if (i > 0) {
+                path = path.substring(0, i);
+                int i1 = path.lastIndexOf("/");
+                if (i1 > 0) {
+                    path = path.substring(0, i1 + 1);
+                }
+            }
+            return path + name;
         }
-        int i = path.indexOf("!/");
-        if (i > 0){
-            path = path.substring(0, i);
-        }
-        path = path + name;
-        System.out.println(path);
-        return path;
+        return finalCookieFilePath + defaultCookieFileName + cacheFileExtension;
     }
 }
