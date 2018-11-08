@@ -56,7 +56,7 @@ UploadRequest uploadRequest = new UploadRequestBuilder()
 ## Spring中使用
 
 ```java
-@Bean
+    @Bean
     public UploadRequest wbpUploadRequest(){
         return new UploadRequestBuilder()
                 .setAcount("", "")
