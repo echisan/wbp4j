@@ -48,7 +48,7 @@ ImageInfo{
 UploadRequest uploadRequest = new UploadRequestBuilder()
                 .setAcount("", "")
                 .setTryLoginTime(重新登陆的时间间隔，默认2分钟，会根据重登的次数*间隔网上涨，直到登陆成功)
-                .setCookieCacheName(登陆成功会对cookie缓存到本地，可以自定义缓存的名称)
+                .setCookieCacheName(登陆成功会对cookie缓存到本地，可以自定义缓存的名称,例："xx.txt",需要把后缀也打出来)
                 .setCookieCacheFilePath(自定义缓存的路径)
                 .build();
 ```
