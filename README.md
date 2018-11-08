@@ -62,6 +62,18 @@ UploadRequest uploadRequest = new UploadRequestBuilder()
                 .setAcount("", "")
                 .build();
     }
+    
+    @PostMapping("/wbp")
+    public ImageInfo wbp(@RequestParam("image") MultipartFile file) throws IOException, Wbp4jException {
+
+        // 需要将MultipartFile转化成file对象
+        File f = new File(file.getName());
+        FileOutputStream fos = new FileOutputStream(f);
+        fos.write(file.getBytes());
+        fos.close;
+        UploadResponse upload = uploadRequest.upload(f);
+        return upload.getImageInfo();
+    }
 ```
 
 ## 更新日志
