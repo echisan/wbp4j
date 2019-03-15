@@ -92,7 +92,7 @@ public class CookieContext implements CookieCacheable {
             if (resourceAsURL == null) {
                 resourceAsURL = cookieContextClassLoader.getResource("");
                 assert resourceAsURL != null;
-                path = resourceAsURL.getPath();
+                path = resourceAsURL.getPath() + name;
                 if (path.startsWith("file:")) {
                     path = path.replace("file:/", "");
                 }
@@ -107,7 +107,7 @@ public class CookieContext implements CookieCacheable {
                     path = path.substring(0, i1 + 1);
                 }
             }
-            return path + name;
+            return path;
         }
         return finalCookieFilePath + defaultCookieFileName + cacheFileExtension;
     }
