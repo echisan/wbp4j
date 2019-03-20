@@ -1,26 +1,18 @@
 package com.github.echisan.wbp4j;
 
-import com.github.echisan.wbp4j.exception.Wbp4jException;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.CRC32;
 
 public class UploadRequestBuilderTest {
 
     @Test
-    public void build() throws IOException, Wbp4jException {
-        WbpUploadRequest request = new UploadRequestBuilder()
-                .setAcount("", "")
-                .setTryLoginTime(5 * 60 * 1000)
-                .build();
-        UploadResponse response = request.upload(new File("F:\\照片\\QQ图片20180227230831.jpg"));
-        System.out.println(response.getResult());
-        System.out.println(response.getMessage());
-        System.out.println(response.getImageInfo());
-        System.out.println(getImageUrl(response.getImageInfo().getPid(), 0, true));
+    public void buildTest(){
+
     }
-    
+
     /**
      * Gets image url.
      *
@@ -42,8 +34,8 @@ public class UploadRequestBuilderTest {
             CRC32 crc32 = new CRC32();
             crc32.update(pid.getBytes());
             return (https ? "https" : "http") + "://" + (https ? "ws" : "ww")
-                   + ((crc32.getValue() & 3) + 1) + ".sinaimg.cn/" + size
-                   + "/" + pid + "." + (pid.charAt(21) == 'g' ? "gif" : "jpg");
+                    + ((crc32.getValue() & 3) + 1) + ".sinaimg.cn/" + size
+                    + "/" + pid + "." + (pid.charAt(21) == 'g' ? "gif" : "jpg");
         }
         // 传递 url
         String url = pid;
