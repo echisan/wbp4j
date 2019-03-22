@@ -1,57 +1,48 @@
 package com.github.echisan.wbp4j;
 
+import com.github.echisan.wbp4j.cache.AbstractCookieContext;
+import com.github.echisan.wbp4j.cache.CookieContext;
 import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
+import com.github.echisan.wbp4j.interceptor.CookieInterceptor;
+import com.github.echisan.wbp4j.interceptor.InitUploadAttributesInterceptor;
+import com.github.echisan.wbp4j.interceptor.LoginInterceptor;
+import com.github.echisan.wbp4j.interceptor.UploadInterceptor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by echisan on 2018/11/5
+ * 用于构建一个UploadRequest的类
+ * 由于需要多个组建进行配合，组装起来稍有复杂，所以提供一个类简化组装操作
  */
 public class UploadRequestBuilder {
-    private String username;
-    private String password;
-    private String cookieCacheName;
-    private long tryLoginTime = 0;
-    private String cookieCachePath;
 
-    public UploadRequestBuilder setAcount(String username, String password) {
-        this.username = username;
-        this.password = password;
-        return this;
+    /**
+     * 使用默认配置，只需要用户名密码即可
+     *
+     * @param username sina username
+     * @param password sina password
+     * @return uploadRequest
+     */
+    public static UploadRequest buildDefault(String username, String password) {
+
+        AbstractCookieContext cookieContext = new CookieContext();
+        WbpHttpRequest httpRequest = new DefaultWbpHttpRequest();
+        List<UploadInterceptor> uploadInterceptors = new ArrayList<>();
+        LoginRequest loginRequest = new WbpLoginRequest(httpRequest, cookieContext);
+
+        ((WbpLoginRequest) loginRequest).setAccount(username, password);
+
+        InitUploadAttributesInterceptor initUploadAttributesInterceptor = new InitUploadAttributesInterceptor();
+        CookieInterceptor cookieInterceptor = new CookieInterceptor(cookieContext);
+        LoginInterceptor loginInterceptor = new LoginInterceptor(loginRequest, cookieContext);
+
+        uploadInterceptors.add(initUploadAttributesInterceptor);
+        uploadInterceptors.add(cookieInterceptor);
+        uploadInterceptors.add(loginInterceptor);
+
+        return new WbpUploadRequest(uploadInterceptors, httpRequest);
     }
 
-    public UploadRequestBuilder setCookieCacheName(String cookieCacheName) {
-        this.cookieCacheName = cookieCacheName;
-        return this;
-    }
-
-    public UploadRequestBuilder setTryLoginTime(long time) {
-        this.tryLoginTime = time;
-        return this;
-    }
-
-    public UploadRequestBuilder setCookieCacheFilePath(String path){
-        this.cookieCachePath = path;
-        return this;
-    }
-
-    public WbpUploadRequest build() {
-        WbpHttpRequest request = new DefaultWbpHttpRequest();
-        if (username == null) {
-            throw new IllegalArgumentException("用户名不能为空!");
-        }
-        if (password == null) {
-            throw new IllegalArgumentException("密码不能为空!");
-        }
-        WbpUploadRequest uploadRequest = new WbpUploadRequest(request, this.username, this.password);
-        if (cookieCacheName != null) {
-            CookieContext.defaultCookieFileName = this.cookieCacheName;
-        }
-        if (cookieCachePath != null){
-            CookieContext.finalCookieFilePath = this.cookieCachePath;
-        }
-        if (tryLoginTime != 0) {
-            WbpUploadRequest.tryLoginTime = this.tryLoginTime;
-        }
-        return uploadRequest;
-    }
 }
