@@ -5,7 +5,7 @@ import com.github.echisan.wbp4j.Entity.ImageInfo;
 public interface UploadResponse {
 
     enum ResultStatus {
-        SUCCESS, FAILED
+        SUCCESS, FAILED,RETRY
     }
 
     void setResult(ResultStatus rs);

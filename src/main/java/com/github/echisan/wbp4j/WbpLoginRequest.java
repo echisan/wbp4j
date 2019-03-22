@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.echisan.wbp4j.Entity.PreLogin;
 import com.github.echisan.wbp4j.cache.AbstractCookieContext;
 import com.github.echisan.wbp4j.exception.LoginFailedException;
+import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpResponse;
 import com.github.echisan.wbp4j.utils.RSAEncodeUtils;
@@ -24,6 +25,9 @@ import java.util.Map;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
+/**
+ * 默认的登陆实现
+ */
 public class WbpLoginRequest implements LoginRequest {
     private static final Logger logger = Logger.getLogger(WbpLoginRequest.class);
     private static String preLoginUrl = "https://login.sina.com.cn/sso/prelogin.php";
@@ -42,6 +46,10 @@ public class WbpLoginRequest implements LoginRequest {
     private WbpHttpRequest wbpHttpRequest;
 
     private AbstractCookieContext cookieContext;
+
+    public WbpLoginRequest(AbstractCookieContext cookieContext){
+        this(new DefaultWbpHttpRequest(),cookieContext);
+    }
 
     public WbpLoginRequest(WbpHttpRequest wbpHttpRequest, AbstractCookieContext cookieContext) {
         this.wbpHttpRequest = wbpHttpRequest;
@@ -142,7 +150,6 @@ public class WbpLoginRequest implements LoginRequest {
                 throw new LoginFailedException(createWbpLoginExceptionMessage("cookie is invalid", response));
             }
 
-            logger.info("[ wbp4j ] login success..");
             logger.debug("[ wbp4j - cookie - debug ] " + cookie);
             cookieContext.setCookie(cookie);
 
@@ -222,7 +229,6 @@ public class WbpLoginRequest implements LoginRequest {
         params.put("service", "miniblog");
         try {
             params.put("sp", RSAEncodeUtils.encode(pwd, preLogin.getPubkey(), "10001"));
-            logger.info("login...encrypt password success!");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                 InvalidKeySpecException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException e) {

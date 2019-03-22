@@ -39,4 +39,13 @@ public class WbpUploadResponse implements UploadResponse {
     public void setImageInfo(ImageInfo imageInfo) {
         this.imageInfo = imageInfo;
     }
+
+    @Override
+    public String toString() {
+        return "WbpUploadResponse{" +
+                "resultStatus=" + resultStatus +
+                ", message='" + message + '\'' +
+                ", imageInfo=" + imageInfo +
+                '}';
+    }
 }

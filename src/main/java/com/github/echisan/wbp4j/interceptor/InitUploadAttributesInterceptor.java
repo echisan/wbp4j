@@ -1,26 +1,36 @@
 package com.github.echisan.wbp4j.interceptor;
 
-import com.github.echisan.wbp4j.UploadResponse;
-import com.github.echisan.wbp4j.exception.LoginFailedException;
 import com.github.echisan.wbp4j.UploadAttributes;
+import com.github.echisan.wbp4j.UploadResponse;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 绑定上传参数的拦截器
+ * 应该作为首个拦截器
+ */
 public class InitUploadAttributesInterceptor implements UploadInterceptor {
 
-    private final String uploadUrl = "http://picupload.service.weibo.com/interface/pic_upload.php?" +
+    private static final String uploadUrl = "http://picupload.service.weibo.com/interface/pic_upload.php?" +
             "ori=1&mime=image%2Fjpeg&data=base64&url=0&markpos=1&logo=&nick=0&marks=1&app=miniblog";
 
-    private final Map<String, String> headers = new HashMap<>();
+    /**
+     * 上传图片的请求头
+     * 已经提供了默认的参数，也可以通过构造器进行覆盖
+     */
+    private Map<String, String> headers;
 
     public InitUploadAttributesInterceptor() {
-        initUploadRequestHeaders();
+        headers = initUploadRequestHeaders();
+    }
+
+    public InitUploadAttributesInterceptor(Map<String, String> headers) {
+        this.headers = headers;
     }
 
     @Override
-    public boolean processBefore(UploadAttributes uploadAttributes) throws IOException, LoginFailedException {
+    public boolean processBefore(UploadAttributes uploadAttributes) {
 
         uploadAttributes.setHeaders(headers);
         uploadAttributes.setUrl(uploadUrl);
@@ -28,10 +38,9 @@ public class InitUploadAttributesInterceptor implements UploadInterceptor {
     }
 
     @Override
-    public boolean processAfter(UploadResponse uploadResponse) {
-        return true;
-    }
+    public void processAfter(UploadResponse uploadResponse) {
 
+    }
 
     private Map<String, String> initUploadRequestHeaders() {
         Map<String, String> headers = new HashMap<>();
