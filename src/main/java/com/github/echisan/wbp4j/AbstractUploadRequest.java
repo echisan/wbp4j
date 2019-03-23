@@ -2,7 +2,8 @@ package com.github.echisan.wbp4j;
 
 import com.github.echisan.wbp4j.exception.UploadFailedException;
 import com.github.echisan.wbp4j.interceptor.UploadInterceptor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +33,7 @@ import java.util.List;
  * 因该可以应付后续可能的改变吧
  */
 public abstract class AbstractUploadRequest implements UploadRequest {
-    private static final Logger logger = Logger.getLogger(AbstractUploadRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractUploadRequest.class);
 
     /**
      * 拦截器，用于执行上传前/后的操作

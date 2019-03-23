@@ -11,7 +11,8 @@ import com.github.echisan.wbp4j.http.WbpHttpResponse;
 import com.github.echisan.wbp4j.interceptor.UploadInterceptor;
 import com.github.echisan.wbp4j.utils.ImageSize;
 import com.github.echisan.wbp4j.utils.WbpUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +23,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * 本来是UploadRequest的一个默认实现，也是线程安全的类
  */
 public class WbpUploadRequest extends AbstractUploadRequest {
-    private static final Logger logger = Logger.getLogger(WbpUploadRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(WbpUploadRequest.class);
 
     /**
      * http请求工具类

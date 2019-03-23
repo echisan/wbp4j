@@ -2,7 +2,8 @@ package com.github.echisan.wbp4j.cache;
 
 import com.github.echisan.wbp4j.WbpConstants;
 import com.github.echisan.wbp4j.exception.Wbp4jException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
@@ -10,7 +11,7 @@ import java.io.*;
  * 该类用于访问Cookie的缓存文件
  */
 public class FileCookieCacheAccessor implements CookieCacheAccessor {
-    private static final Logger logger = Logger.getLogger(FileCookieCacheAccessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileCookieCacheAccessor.class);
     /**
      * 默认的缓存文件名称，其实也可以是路径，但要符合对应操作系统的路径格式
      */

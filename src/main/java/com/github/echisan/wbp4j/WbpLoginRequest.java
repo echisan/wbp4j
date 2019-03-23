@@ -8,7 +8,8 @@ import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpResponse;
 import com.github.echisan.wbp4j.utils.RSAEncodeUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -29,7 +30,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * 默认的登陆实现
  */
 public class WbpLoginRequest extends AbstractLoginRequest {
-    private static final Logger logger = Logger.getLogger(WbpLoginRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(WbpLoginRequest.class);
     private static final String preLoginUrl = "https://login.sina.com.cn/sso/prelogin.php";
     private static final String loginUrl = "https://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.19)";
     private final Map<String, String> preLoginHeaders;

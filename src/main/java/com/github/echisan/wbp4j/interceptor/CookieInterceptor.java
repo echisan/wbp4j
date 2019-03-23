@@ -4,7 +4,8 @@ import com.github.echisan.wbp4j.UploadAttributes;
 import com.github.echisan.wbp4j.UploadResponse;
 import com.github.echisan.wbp4j.WbpConstants;
 import com.github.echisan.wbp4j.cache.AbstractCookieContext;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
  * 检查是否存在cookie，并且设置cookie绑定到上传参数当中去
  */
 public class CookieInterceptor implements UploadInterceptor {
-    private static final Logger logger = Logger.getLogger(CookieInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CookieInterceptor.class);
 
     /**
      * cookie会话

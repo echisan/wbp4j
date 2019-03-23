@@ -1,6 +1,7 @@
 package com.github.echisan.wbp4j.cache;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
  * 实现具体的逻辑
  */
 public class CookieContext extends AbstractCookieContext {
-    private static final Logger logger = Logger.getLogger(CookieContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(CookieContext.class);
 
     public CookieContext(CookieCacheAccessor accessor) {
         super(accessor);
