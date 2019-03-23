@@ -1,5 +1,8 @@
 package com.github.echisan.wbp4j;
 
+/**
+ * 一些常量
+ */
 public class WbpConstants {
 
     /**

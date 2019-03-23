@@ -31,4 +31,13 @@ public class DefaultWbpHttpResponse implements WbpHttpResponse {
     public String getBody() {
         return this.body;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultWbpHttpResponse{" +
+                "statusCode=" + statusCode +
+                ", header=" + header +
+                ", body='" + body + '\'' +
+                '}';
+    }
 }

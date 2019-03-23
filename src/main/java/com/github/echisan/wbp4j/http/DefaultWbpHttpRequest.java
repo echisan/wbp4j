@@ -11,6 +11,11 @@ import java.util.Set;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
+ * com.github.echisan.wbp4j.http.WbpHttpRequest默认实现
+ * 采用java.net.HttpURLConnection实现
+ * 当初也拿HttpClient实现过，为了减少依赖，后来删了
+ * 采用HttpURLConnection实现
+ * <p>
  * Created by echisan on 2018/11/5
  */
 public class DefaultWbpHttpRequest implements WbpHttpRequest {

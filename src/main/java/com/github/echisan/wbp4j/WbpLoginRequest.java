@@ -28,12 +28,10 @@ import static java.net.HttpURLConnection.HTTP_OK;
 /**
  * 默认的登陆实现
  */
-public class WbpLoginRequest implements LoginRequest {
+public class WbpLoginRequest extends AbstractLoginRequest {
     private static final Logger logger = Logger.getLogger(WbpLoginRequest.class);
-    private static String preLoginUrl = "https://login.sina.com.cn/sso/prelogin.php";
-    private static String loginUrl = "https://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.19)";
-    private static String _username;
-    private static String _password;
+    private static final String preLoginUrl = "https://login.sina.com.cn/sso/prelogin.php";
+    private static final String loginUrl = "https://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.19)";
     private final Map<String, String> preLoginHeaders;
     private final Map<String, String> preLoginParams;
     private final Map<String, String> loginHeaders;
@@ -47,14 +45,13 @@ public class WbpLoginRequest implements LoginRequest {
 
     private AbstractCookieContext cookieContext;
 
-    public WbpLoginRequest(AbstractCookieContext cookieContext){
-        this(new DefaultWbpHttpRequest(),cookieContext);
+    public WbpLoginRequest(AbstractCookieContext cookieContext) {
+        this(new DefaultWbpHttpRequest(), cookieContext);
     }
 
     public WbpLoginRequest(WbpHttpRequest wbpHttpRequest, AbstractCookieContext cookieContext) {
         this.wbpHttpRequest = wbpHttpRequest;
         this.cookieContext = cookieContext;
-
         this.preLoginHeaders = getDefaultPreLoginHeader();
         this.preLoginParams = getDefaultPreLoginParams();
         this.loginHeaders = getDefaultLoginHeader();
@@ -71,28 +68,14 @@ public class WbpLoginRequest implements LoginRequest {
         this.wbpHttpRequest = wbpHttpRequest;
     }
 
-    public void setAccount(String username, String password) {
-        if (username == null || password == null) {
-            throw new IllegalArgumentException("username or password cannot be null.");
-        }
-        _username = username;
-        _password = password;
-    }
-
     private PreLogin preLogin() throws LoginFailedException {
 
         if (!checkAccount()) {
-            throw new LoginFailedException("username or password cannot be null.");
+            throw new LoginFailedException("username or password cannot be null or empty.");
         }
 
         // put username to pre login params map.
         setUsernameToPreLoginParams();
-
-        logger.debug("[ preLogin debug info ] \n" +
-                "[ preLoginUrl ] " + preLoginUrl +
-                "\n[ preLogin headers ] " + preLoginHeaders +
-                "\n[ preLogin params ] " + preLoginParams
-        );
 
         try {
             WbpHttpResponse response = wbpHttpRequest.doGet(preLoginUrl, preLoginHeaders, preLoginParams);
@@ -125,7 +108,7 @@ public class WbpLoginRequest implements LoginRequest {
             WbpHttpResponse response = wbpHttpRequest.doPost(loginUrl, loginHeaders, loginParams);
 
             if (response.getStatusCode() != HTTP_OK) {
-                throw new LoginFailedException(createWbpLoginExceptionMessage("do request login url failed", response));
+                throw new LoginFailedException(createWbpLoginExceptionMessage(response));
             }
 
             // get cookie from response headers
@@ -135,24 +118,17 @@ public class WbpLoginRequest implements LoginRequest {
                 cookie = header.get("Set-Cookie");
             }
 
-            if (cookie == null) {
-
-                String reason = getReason(response.getBody());
-
-                if (reason != null) {
-                    throw new LoginFailedException("login failed,reason:[ " + reason + " ]");
-                } else {
-                    throw new LoginFailedException(createWbpLoginExceptionMessage("cannot find set-cookie in headers", response));
-                }
-            }
-
+            // 如果cookie并不符合预期
             if (cookie.length() < WbpConstants.COOKIE_LENGTH_THRESHOLD) {
-                throw new LoginFailedException(createWbpLoginExceptionMessage("cookie is invalid", response));
+                logger.debug("response cookie: " + cookie);
+                String reason = getReason(response.getBody());
+                if (reason != null) {
+                    throw new LoginFailedException("登陆失败，原因：" + reason);
+                }
+                throw new LoginFailedException("登陆失败，未知原因。响应数据为：" + response.getBody());
             }
 
-            logger.debug("[ wbp4j - cookie - debug ] " + cookie);
             cookieContext.setCookie(cookie);
-
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -172,7 +148,6 @@ public class WbpLoginRequest implements LoginRequest {
         Map<String, String> params = new HashMap<>();
         params.put("client", "ssologin.js(v1.4.19)");
         params.put("entry", "weibo");
-//        params.put("su", _username);
         params.put("rsakt", "mod");
         params.put("checkpin", "1");
         params.put("_", String.valueOf(System.currentTimeMillis()));
@@ -181,18 +156,23 @@ public class WbpLoginRequest implements LoginRequest {
 
     private void setUsernameToPreLoginParams() {
         if (!preLoginParams.containsKey("su")) {
-            preLoginParams.put("su", _username);
+            preLoginParams.put("su", getUsername());
         }
     }
 
-    private String createWbpLoginExceptionMessage(String message, WbpHttpResponse response) {
-        return "[ login failed message ]" + message +
+    private String createWbpLoginExceptionMessage(WbpHttpResponse response) {
+        return "[ login failed message ]" + "do request login url failed" +
                 "\n[ response code ] " + response.getStatusCode() +
                 "\n[ response headers ]" + response.getHeader() +
                 "\n[ response body ]" + response.getBody();
     }
 
 
+    /**
+     * 生成默认的登陆请求头
+     *
+     * @return 请求头
+     */
     private Map<String, String> getDefaultLoginHeader() {
         Map<String, String> header = new HashMap<>();
         header.put("Referer", "https://weibo.com/");
@@ -204,13 +184,17 @@ public class WbpLoginRequest implements LoginRequest {
         return header;
     }
 
-    private boolean checkAccount() {
-        return _username != null && _password != null;
-    }
-
+    /**
+     * 生成登陆需要的参数，也没什么办法写好看一点了
+     * 这方法也写的太丑了
+     *
+     * @param preLogin 预登陆结果
+     * @return 登陆参数
+     * @throws LoginFailedException lfe
+     */
     private Map<String, String> createLoginParams(PreLogin preLogin) throws LoginFailedException {
         // 根据微博加密js中密码拼接的方法
-        String pwd = preLogin.getServertime() + "\t" + preLogin.getNonce() + "\n" + _password;
+        String pwd = preLogin.getServertime() + "\t" + preLogin.getNonce() + "\n" + getPassword();
 
         Map<String, String> params = new HashMap<>();
         params.put("encoding", "UTF-8");
@@ -236,7 +220,7 @@ public class WbpLoginRequest implements LoginRequest {
             throw new LoginFailedException("login failed. encrypt password failed. message: " + e.getMessage());
         }
         params.put("sr", "1920*1080");
-        params.put("su", Base64.getEncoder().encodeToString(_username.getBytes()));
+        params.put("su", Base64.getEncoder().encodeToString(getUsername().getBytes()));
         params.put("url", "https://weibo.com/ajaxlogin.php?framelogin=1&callback=parent.sinaSSOController.feedBackUrlCallBack");
         params.put("useticket", "1");
         params.put("vsnf", "1");
@@ -244,7 +228,13 @@ public class WbpLoginRequest implements LoginRequest {
     }
 
 
-    // parse reason from weibo response html
+    /**
+     * 从登陆的响应结果中解析，获取登陆失败中响应的原因
+     *
+     * @param responseHtml response
+     * @return reason
+     * @throws UnsupportedEncodingException uee
+     */
     private String getReason(String responseHtml) throws UnsupportedEncodingException {
 
         String location = getLocation(responseHtml);
@@ -262,6 +252,12 @@ public class WbpLoginRequest implements LoginRequest {
         return null;
     }
 
+    /**
+     * 从登陆的响应结果中解析
+     *
+     * @param responseHtml responseHtml
+     * @return location未知的内容
+     */
     private String getLocation(String responseHtml) {
         int replace = responseHtml.indexOf("replace");
         if (replace == -1) {

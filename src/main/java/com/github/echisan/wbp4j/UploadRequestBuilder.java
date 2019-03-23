@@ -1,7 +1,9 @@
 package com.github.echisan.wbp4j;
 
 import com.github.echisan.wbp4j.cache.AbstractCookieContext;
+import com.github.echisan.wbp4j.cache.CookieCacheAccessor;
 import com.github.echisan.wbp4j.cache.CookieContext;
+import com.github.echisan.wbp4j.cache.FileCookieCacheAccessor;
 import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
 import com.github.echisan.wbp4j.interceptor.*;
@@ -24,9 +26,10 @@ public class UploadRequestBuilder {
     }
 
     static class Builder {
-        private AbstractCookieContext abstractCookieContext = new CookieContext();
+        private CookieCacheAccessor cookieCacheAccessor = new FileCookieCacheAccessor();
+        private AbstractCookieContext abstractCookieContext = new CookieContext(cookieCacheAccessor);
         private List<UploadInterceptor> uploadInterceptors = new ArrayList<>();
-        private LoginRequest loginRequest = new WbpLoginRequest(abstractCookieContext);
+        private AbstractLoginRequest loginRequest = new WbpLoginRequest(abstractCookieContext);
         private WbpHttpRequest wbpHttpRequest = new DefaultWbpHttpRequest();
         private String username;
         private String password;
@@ -41,7 +44,7 @@ public class UploadRequestBuilder {
                     new InitUploadAttributesInterceptor();
             CookieInterceptor cookieInterceptor = new CookieInterceptor(abstractCookieContext);
             LoginInterceptor loginInterceptor = new LoginInterceptor(loginRequest);
-            ((WbpLoginRequest) loginRequest).setAccount(this.username, this.password);
+            loginRequest.setUsernamePassword(username, password);
             ReCheckCookieInterceptor reCheckCookieInterceptor = new ReCheckCookieInterceptor(abstractCookieContext);
 
             uploadInterceptors.add(initUploadAttributesInterceptor);
@@ -60,22 +63,27 @@ public class UploadRequestBuilder {
             return this;
         }
 
-        public Builder addUploadInterceptors(UploadInterceptor uploadInterceptor) {
+        public Builder addUploadInterceptor(UploadInterceptor uploadInterceptor) {
             this.uploadInterceptors.add(uploadInterceptor);
             return this;
         }
 
-        public Builder addUploadInterceptors(int index, UploadInterceptor uploadInterceptor) {
+        public Builder addUploadInterceptor(int index, UploadInterceptor uploadInterceptor) {
             this.uploadInterceptors.add(index, uploadInterceptor);
             return this;
         }
 
-        public Builder setLoginRequest(LoginRequest loginRequest) {
+        public Builder addUploadInterceptors(List<UploadInterceptor> uploadInterceptors) {
+            this.uploadInterceptors.addAll(uploadInterceptors);
+            return this;
+        }
+
+        public Builder setLoginRequest(AbstractLoginRequest loginRequest) {
             this.loginRequest = loginRequest;
             return this;
         }
 
-        public Builder setAccount(String username, String password) {
+        public Builder setUsernamePassword(String username, String password) {
             this.username = username;
             this.password = password;
             return this;
@@ -86,12 +94,18 @@ public class UploadRequestBuilder {
             return this;
         }
 
+        public Builder setCacheFilename(String filename) {
+            this.cookieCacheAccessor = new FileCookieCacheAccessor(filename);
+            this.abstractCookieContext.setAccessor(cookieCacheAccessor);
+            return this;
+        }
+
         public UploadRequest build() {
             if (username == null || password == null) {
                 throw new IllegalArgumentException("用户名密码不能为空");
             }
 
-            WbpUploadRequest wbpUploadRequest = new WbpUploadRequest(uploadInterceptors);
+            WbpUploadRequest wbpUploadRequest = new WbpUploadRequest(uploadInterceptors, wbpHttpRequest);
 
             if (retryable) {
                 retryableUploadRequest = new DefaultRetryUploadRequest(wbpUploadRequest);

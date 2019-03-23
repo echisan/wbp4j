@@ -1,6 +1,9 @@
 package com.github.echisan.wbp4j.utils;
 
-public enum  ImageSize {
+/**
+ * 图片尺寸
+ */
+public enum ImageSize {
     large,
     mw1024,
     mw690,

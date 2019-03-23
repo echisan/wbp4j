@@ -7,11 +7,13 @@ import java.util.zip.CRC32;
 public class WbpUtils {
 
     /**
+     * 本方法来自 @dong4j：https://github.com/dong4j
+     * <p>
      * Gets image url.
      *
-     * @param pid     the pid
+     * @param pid       the pid
      * @param imageSize the imageSize
-     * @param https   the https
+     * @param https     the https
      * @return the image url
      */
     public static String getImageUrl(String pid, ImageSize imageSize, boolean https) {

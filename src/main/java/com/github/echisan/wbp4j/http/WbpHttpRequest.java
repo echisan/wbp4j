@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * http请求接口封装
+ */
 public interface WbpHttpRequest {
     void setHeader(Map<String, String> header);
 

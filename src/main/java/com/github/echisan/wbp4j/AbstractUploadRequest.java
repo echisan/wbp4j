@@ -49,16 +49,41 @@ public abstract class AbstractUploadRequest implements UploadRequest {
     }
 
 
+    /**
+     * 提供一个包装方法，虽然入参是File，但是内部会把file转换成base64再调用上传接口上传
+     *
+     * @param file image file
+     * @return uploadResponse
+     * @throws IOException           ioe
+     * @throws UploadFailedException ufe
+     */
     @Override
     public UploadResponse upload(File file) throws IOException, UploadFailedException {
         return upload(imageToBase64(file));
     }
 
+    /**
+     * 提供一个byte数组的一个包装方法，可以方便的为springMVC中的multipartFile提供上传接口
+     * spring中仅需upload(multipartFile.getBytes())即可
+     *
+     * @param bytes bytes数组
+     * @return uploadResponse
+     * @throws IOException           ioe
+     * @throws UploadFailedException ufe
+     */
     @Override
     public UploadResponse upload(byte[] bytes) throws IOException, UploadFailedException {
         return upload(Base64.getEncoder().encodeToString(bytes));
     }
 
+    /**
+     * 真正的上传接口，主要上传base64数据到微博接口
+     *
+     * @param base64 b64
+     * @return uploadResponse
+     * @throws IOException           ioe
+     * @throws UploadFailedException ufe
+     */
     @Override
     public UploadResponse upload(String base64) throws IOException, UploadFailedException {
 
@@ -94,6 +119,16 @@ public abstract class AbstractUploadRequest implements UploadRequest {
         return uploadResponse;
     }
 
+    /**
+     * 真正的上传逻辑在这里，upload(String base64)负责调用本方法
+     * 由于采用了拦截器模式，处理拦截器列表不应该直接与上传操作耦合
+     * 所以应该交由子类去负责上传，子类只需实现本方法即可
+     *
+     * @param uploadAttributes uploadAttributes上传图片的参数
+     * @return uploadResponse
+     * @throws IOException           ioe
+     * @throws UploadFailedException ufe
+     */
     protected abstract UploadResponse doUpload(UploadAttributes uploadAttributes) throws IOException, UploadFailedException;
 
     /**
@@ -117,5 +152,4 @@ public abstract class AbstractUploadRequest implements UploadRequest {
         }
         return base64Image;
     }
-
 }

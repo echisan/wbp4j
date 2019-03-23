@@ -10,6 +10,8 @@ import java.io.IOException;
  * <p>
  * 提供三种上传方式
  * 虽然到最后都是调用upload(String base64)去实现的了。。
+ * 主要提供upload(String base64)的包装方法
+ * 不需要上层去实现了
  */
 public interface UploadRequest {
 

@@ -111,10 +111,10 @@ public class WbpUploadRequest extends AbstractUploadRequest {
     }
 
     private String createWbpUploadDebugMessage(String message, WbpHttpResponse response) {
-        return "[ upload debug message ]" + message +
+        return message +
                 "\n[ response code ] " + response.getStatusCode() +
                 "\n[ response headers ]" + response.getHeader() +
-                "\n[ response body ]" + response.getBody();
+                "\n[ response body ]\n" + response.getBody();
     }
 
 }
