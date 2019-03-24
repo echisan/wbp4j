@@ -168,23 +168,6 @@ public class WbpLoginRequest extends AbstractLoginRequest {
                 "\n[ response body ]" + response.getBody();
     }
 
-
-    /**
-     * 生成默认的登陆请求头
-     *
-     * @return 请求头
-     */
-    private Map<String, String> getDefaultLoginHeader() {
-        Map<String, String> header = new HashMap<>();
-        header.put("Referer", "https://weibo.com/");
-        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36\"");
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Accept", "text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8");
-        header.put("Accept-Encoding", "deflate, br");
-        header.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
-        return header;
-    }
-
     /**
      * 生成登陆需要的参数，也没什么办法写好看一点了
      * 这方法也写的太丑了

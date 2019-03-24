@@ -13,13 +13,14 @@ public abstract class AbstractCookieContext {
     /**
      * 持久层缓存的接口
      */
-    protected CookieCacheAccessor accessor;
+    protected final CookieCacheAccessor accessor;
 
     public AbstractCookieContext(CookieCacheAccessor accessor) {
         if (accessor != null) {
             this.accessor = accessor;
+        } else {
+            this.accessor = new FileCookieCacheAccessor();
         }
-        this.accessor = new FileCookieCacheAccessor();
     }
 
     public AbstractCookieContext() {
@@ -34,7 +35,4 @@ public abstract class AbstractCookieContext {
         return accessor;
     }
 
-    public void setAccessor(CookieCacheAccessor accessor) {
-        this.accessor = accessor;
-    }
 }

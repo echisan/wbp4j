@@ -13,7 +13,10 @@ import java.util.List;
 
 /**
  * 用于构建一个UploadRequest的类
- * 由于需要多个组建进行配合，组装起来稍有复杂，所以提供一个类简化组装操作
+ * 由于需要多个组建进行配合，组装起来稍有复杂，所以提供一个类完成组装操作
+ * <p>
+ * 虽然想提供一个类供调用者根据自身需求去更换某个组件
+ * 但是想了好久都不知道该怎么去实现
  */
 public class UploadRequestBuilder {
 
@@ -29,7 +32,7 @@ public class UploadRequestBuilder {
         private CookieCacheAccessor cookieCacheAccessor = new FileCookieCacheAccessor();
         private AbstractCookieContext abstractCookieContext = new CookieContext(cookieCacheAccessor);
         private List<UploadInterceptor> uploadInterceptors = new ArrayList<>();
-        private AbstractLoginRequest loginRequest = new WbpLoginRequest(abstractCookieContext);
+        private AbstractLoginRequest loginRequest = new SzvoneLoginRequest(abstractCookieContext);
         private WbpHttpRequest wbpHttpRequest = new DefaultWbpHttpRequest();
         private String username;
         private String password;
@@ -53,50 +56,41 @@ public class UploadRequestBuilder {
             uploadInterceptors.add(reCheckCookieInterceptor);
         }
 
-        public Builder setAbstractCookieContext(AbstractCookieContext abstractCookieContext) {
-            this.abstractCookieContext = abstractCookieContext;
-            return this;
-        }
-
-        public Builder setUploadInterceptors(List<UploadInterceptor> uploadInterceptors) {
-            this.uploadInterceptors = uploadInterceptors;
-            return this;
-        }
-
-        public Builder addUploadInterceptor(UploadInterceptor uploadInterceptor) {
+        public Builder addInterceptor(UploadInterceptor uploadInterceptor) {
             this.uploadInterceptors.add(uploadInterceptor);
             return this;
         }
 
-        public Builder addUploadInterceptor(int index, UploadInterceptor uploadInterceptor) {
-            this.uploadInterceptors.add(index, uploadInterceptor);
-            return this;
-        }
-
-        public Builder addUploadInterceptors(List<UploadInterceptor> uploadInterceptors) {
+        public Builder addInterceptors(List<UploadInterceptor> uploadInterceptors) {
             this.uploadInterceptors.addAll(uploadInterceptors);
             return this;
         }
 
-        public Builder setLoginRequest(AbstractLoginRequest loginRequest) {
-            this.loginRequest = loginRequest;
+        public Builder addInterceptor(int index, UploadInterceptor uploadInterceptor) {
+            this.uploadInterceptors.add(index, uploadInterceptor);
             return this;
         }
 
-        public Builder setUsernamePassword(String username, String password) {
-            this.username = username;
-            this.password = password;
+        public Builder setInterceptors(List<UploadInterceptor> uploadInterceptors) {
+            if (uploadInterceptors == null || uploadInterceptors.size() == 0) {
+                throw new IllegalArgumentException("拦截器必须不能为空！");
+            }
+            this.uploadInterceptors = uploadInterceptors;
             return this;
         }
 
-        public Builder setRetryable(boolean retryable) {
+        public Builder isRetryable(boolean retryable) {
             this.retryable = retryable;
             return this;
         }
 
+        public Builder setRetryStrategy(RetryableUploadRequest retryStrategy) {
+            this.retryableUploadRequest = retryStrategy;
+            return this;
+        }
+
         public Builder setCacheFilename(String filename) {
-            this.cookieCacheAccessor = new FileCookieCacheAccessor(filename);
-            this.abstractCookieContext.setAccessor(cookieCacheAccessor);
+            this.abstractCookieContext = new CookieContext(new FileCookieCacheAccessor(filename));
             return this;
         }
 
@@ -108,42 +102,16 @@ public class UploadRequestBuilder {
             WbpUploadRequest wbpUploadRequest = new WbpUploadRequest(uploadInterceptors, wbpHttpRequest);
 
             if (retryable) {
-                retryableUploadRequest = new DefaultRetryUploadRequest(wbpUploadRequest);
+                if (this.retryableUploadRequest == null) {
+                    retryableUploadRequest = new DefaultRetryUploadRequest(wbpUploadRequest);
+                } else {
+                    if (this.retryableUploadRequest.getUploadRequest() == null) {
+                        this.retryableUploadRequest.setUploadRequest(wbpUploadRequest);
+                    }
+                }
                 return retryableUploadRequest;
             }
             return wbpUploadRequest;
-        }
-
-        public AbstractCookieContext getAbstractCookieContext() {
-            return abstractCookieContext;
-        }
-
-        public List<UploadInterceptor> getUploadInterceptors() {
-            return uploadInterceptors;
-        }
-
-        public LoginRequest getLoginRequest() {
-            return loginRequest;
-        }
-
-        public WbpHttpRequest getWbpHttpRequest() {
-            return wbpHttpRequest;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public boolean isRetryable() {
-            return retryable;
-        }
-
-        public RetryableUploadRequest getRetryableUploadRequest() {
-            return retryableUploadRequest;
         }
     }
 }

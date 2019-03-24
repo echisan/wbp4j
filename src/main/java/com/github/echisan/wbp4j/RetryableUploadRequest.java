@@ -20,6 +20,9 @@ public abstract class RetryableUploadRequest extends AbstractUploadRequest {
         this.uploadRequest = uploadRequest;
     }
 
+    public RetryableUploadRequest() {
+    }
+
     /**
      * 应该是用while还是用if呢，纠结
      *
@@ -58,4 +61,12 @@ public abstract class RetryableUploadRequest extends AbstractUploadRequest {
      * @return 如果返回true则会进行重试，如果未false则直接返回结果
      */
     public abstract boolean shouldRetry(UploadResponse uploadResponse);
+
+    public AbstractUploadRequest getUploadRequest() {
+        return uploadRequest;
+    }
+
+    public void setUploadRequest(AbstractUploadRequest uploadRequest) {
+        this.uploadRequest = uploadRequest;
+    }
 }

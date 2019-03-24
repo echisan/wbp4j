@@ -1,5 +1,8 @@
 package com.github.echisan.wbp4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 扩展了LoginRequest接口
  * 毕竟需要用户名跟密码
@@ -38,5 +41,21 @@ public abstract class AbstractLoginRequest implements LoginRequest {
             return false;
         }
         return !username.trim().equals("") && !password.trim().equals("");
+    }
+
+    /**
+     * 生成默认的登陆请求头
+     *
+     * @return 请求头
+     */
+    protected Map<String, String> getDefaultLoginHeader() {
+        Map<String, String> header = new HashMap<>();
+        header.put("Referer", "https://weibo.com/");
+        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36\"");
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("Accept", "text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8");
+        header.put("Accept-Encoding", "deflate, br");
+        header.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+        return header;
     }
 }
