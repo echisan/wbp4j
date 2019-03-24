@@ -29,7 +29,6 @@
 ```java
 UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("your username", "your password");
 UploadResponse response = uploadRequest.upload(new File(""));
-System.out.println(response);
 ```
 
 ### 自定义配置
