@@ -11,7 +11,7 @@ import com.github.echisan.wbp4j.exception.LoginFailedException;
  * <p>
  * 为了与上传解耦，将登陆的操作放在拦截器
  * <p>
- * 目前拦截器顺序 CookieInterceptor --> LoginInterceptor
+ * 目前拦截器顺序 InitUploadAttributes - InterceptorCookieInterceptor - LoginInterceptor - ..
  * 目的是上传之前必须存在cookie调用上传接口才有意义
  * 所以本拦截器主要作用在于通过登陆获取cookie
  */

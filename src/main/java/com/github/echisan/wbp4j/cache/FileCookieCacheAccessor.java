@@ -1,7 +1,6 @@
 package com.github.echisan.wbp4j.cache;
 
 import com.github.echisan.wbp4j.WbpConstants;
-import com.github.echisan.wbp4j.exception.Wbp4jException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +41,7 @@ public class FileCookieCacheAccessor implements CookieCacheAccessor {
      * save cookie to file
      *
      * @param cookie the cookie
-     * @throws IOException    the IOException
-     * @throws Wbp4jException the Wbp4jException
+     * @throws IOException the IOException
      */
     @Override
     public void saveCookie(String cookie) throws IOException {
