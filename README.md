@@ -2,11 +2,14 @@
 （第三方）使用Java实现的微博图床API，提供简单的api即可完成上传图片到微博图床，
 可方便集成到自己的项目当中。
 
+[文档](https://github.com/echisan/wbp4j/wiki)
+
 # 简介
 这是个使用了微博图床接口的上传图片的api
 - 使用方便简单
 - cookie缓存
 - cookie过期自动登录
+- 第三方依赖少，仅依赖fastjson，logback
 - 可自定义配置
 
 ## Maven
@@ -50,7 +53,7 @@ UploadResponse uploadResponse = uploadRequest.upload(new File(""));
 ```
 
 返回结果
-```
+```json
 {
     "message": "上传图片成功",
     "imageInfo": {
@@ -93,6 +96,10 @@ class TestController {
     @PostMapping
     public WbpUploadResponse uploadImage(@RequestPart("file") MultipartFile multipartFile) throws IOException, UploadFailedException {
         UploadResponse upload = uploadRequest.upload(multipartFile.getBytes());
+        // 推荐先做一个判断
+        // if (response.getResult().equals(UploadResponse.ResultStatus.SUCCESS)) {
+        //    做自己的响应封装
+        //}
         return (WbpUploadResponse) upload;
     }
 
