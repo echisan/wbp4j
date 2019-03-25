@@ -6,11 +6,12 @@ import com.github.echisan.wbp4j.exception.LoginFailedException;
 import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpResponse;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class SzvoneLoginRequest extends AbstractLoginRequest {
         params.put("useticket", "0");
         params.put("pagerefer", "");
         params.put("vsnf", "1");
-        params.put("su", Base64.encode(getUsername().getBytes()));
+        params.put("su", Base64.getEncoder().encodeToString(getUsername().getBytes()));
         params.put("service", "sso");
         params.put("sp", getPassword());
         params.put("sr", "1024*768");
