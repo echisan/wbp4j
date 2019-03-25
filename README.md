@@ -7,6 +7,7 @@
 # 简介
 这是个使用了微博图床接口的上传图片的api
 - 使用方便简单
+- 获取简单，直接加入maven依赖即可
 - cookie缓存
 - cookie过期自动登录
 - 第三方依赖少，仅依赖fastjson，logback
