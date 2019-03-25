@@ -1,6 +1,6 @@
 package com.github.echisan.wbp4j;
 
-import com.github.echisan.wbp4j.Entity.ImageInfo;
+import com.github.echisan.wbp4j.entity.ImageInfo;
 
 /**
  * 响应结果接口

@@ -1,6 +1,6 @@
 package com.github.echisan.wbp4j;
 
-import com.github.echisan.wbp4j.Entity.ImageInfo;
+import com.github.echisan.wbp4j.entity.ImageInfo;
 
 /**
  * Created by echisan on 2018/11/5

@@ -1,4 +1,4 @@
-package com.github.echisan.wbp4j.Entity;
+package com.github.echisan.wbp4j.entity;
 
 /**
  * Created by echisan on 2018/6/14

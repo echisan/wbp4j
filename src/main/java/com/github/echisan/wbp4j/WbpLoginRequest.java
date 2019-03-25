@@ -1,7 +1,7 @@
 package com.github.echisan.wbp4j;
 
 import com.alibaba.fastjson.JSON;
-import com.github.echisan.wbp4j.Entity.PreLogin;
+import com.github.echisan.wbp4j.entity.PreLogin;
 import com.github.echisan.wbp4j.cache.AbstractCookieContext;
 import com.github.echisan.wbp4j.exception.LoginFailedException;
 import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;

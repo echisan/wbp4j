@@ -1,9 +1,9 @@
 package com.github.echisan.wbp4j;
 
 import com.alibaba.fastjson.JSON;
-import com.github.echisan.wbp4j.Entity.ImageInfo;
-import com.github.echisan.wbp4j.Entity.UploadResp;
-import com.github.echisan.wbp4j.Entity.upload.Pic_1;
+import com.github.echisan.wbp4j.entity.ImageInfo;
+import com.github.echisan.wbp4j.entity.UploadResp;
+import com.github.echisan.wbp4j.entity.upload.Pic_1;
 import com.github.echisan.wbp4j.exception.UploadFailedException;
 import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
