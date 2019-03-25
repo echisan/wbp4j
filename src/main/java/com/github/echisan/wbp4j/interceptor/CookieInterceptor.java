@@ -56,6 +56,12 @@ public class CookieInterceptor implements UploadInterceptor {
 
     @Override
     public void processAfter(UploadResponse uploadResponse) {
-
+        if (uploadResponse.getResult().equals(UploadResponse.ResultStatus.RETRY)){
+            try {
+                cookieContext.setCookie("");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

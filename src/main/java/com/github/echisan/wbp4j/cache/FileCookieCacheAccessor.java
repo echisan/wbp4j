@@ -100,6 +100,9 @@ public class FileCookieCacheAccessor implements CookieCacheAccessor {
      * @return is cookie cache legal
      */
     private boolean isCookieCacheLegal(String cookie) {
+        if (cookie == null){
+            return false;
+        }
         return cookie.length() > WbpConstants.COOKIE_LENGTH_THRESHOLD;
     }
 }
