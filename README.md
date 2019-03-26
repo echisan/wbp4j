@@ -19,7 +19,7 @@
 <dependency>
   <groupId>com.github.echisan</groupId>
   <artifactId>wbp4j</artifactId>
-  <version>3.0</version>
+  <version>3.1</version>
 </dependency>
 ```
 
@@ -110,6 +110,8 @@ class TestController {
 
 
 ## 更新日志
+> 修复了重试机制不生效的问题 ———— 2019.03.25
+
 > 修复了部署到服务器后无法登陆的问题，修复了返回的图片格式问题 ————2019.03.24
 
 > 重构代码，代码结构更清晰稳定，减低各模块的耦合。修复缓存文件位置错误的问题，修复上传图片格式问题，支持了上传gif————2019.03.23
