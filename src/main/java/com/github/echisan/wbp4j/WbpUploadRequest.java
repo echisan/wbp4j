@@ -70,6 +70,7 @@ public class WbpUploadRequest extends AbstractUploadRequest {
             if (ret == -1) {
                 uploadResponse.setResult(UploadResponse.ResultStatus.RETRY);
                 uploadResponse.setMessage("cookie已过期，请重新获取");
+                logger.debug("cookie was expiration");
                 return uploadResponse;
             }
 

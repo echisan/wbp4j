@@ -129,7 +129,7 @@ public class WbpLoginRequest extends AbstractLoginRequest {
                 throw new LoginFailedException("登陆失败，未知原因。响应数据为：" + response.getBody());
             }
 
-            cookieContext.setCookie(cookie);
+            cookieContext.saveCookie(cookie);
 
         } catch (IOException e) {
             e.printStackTrace();

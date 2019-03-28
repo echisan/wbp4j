@@ -20,6 +20,18 @@ public class CookieContext extends AbstractCookieContext {
     public CookieContext() {
     }
 
+    /**
+     * 当保存cookie时，需要同时保存到内存以及缓存中，以方便下一次的调用获取
+     *
+     * @param cookie cookie
+     * @throws IOException IOException
+     */
+    @Override
+    public void saveCookie(String cookie) throws IOException {
+        CookieHolder.setCookie(cookie);
+        accessor.saveCookie(cookie);
+    }
+
     @Override
     public String getCookie() throws IOException {
         String cookie = CookieHolder.getCookie();
@@ -40,15 +52,10 @@ public class CookieContext extends AbstractCookieContext {
         return cookie;
     }
 
-    /**
-     * 当保存cookie时，需要同时保存到内存以及缓存中，以方便下一次的调用获取
-     *
-     * @param cookie cookie
-     * @throws IOException IOException
-     */
     @Override
-    public void setCookie(String cookie) throws IOException {
-        CookieHolder.setCookie(cookie);
-        accessor.saveCookie(cookie);
+    public void clear() throws IOException {
+        CookieHolder.setCookie(null);
+        accessor.clear();
+        logger.debug("clear cookie cache success!");
     }
 }

@@ -49,6 +49,7 @@ public class SzvoneLoginRequest extends AbstractLoginRequest {
                 throw new LoginFailedException("登陆失败，响应状态码为：" + wbpHttpResponse.getStatusCode());
             }
 
+            logger.debug("login...");
             logger.debug("responseHeader:" + wbpHttpResponse.getHeader());
             logger.debug("responseBody:" + wbpHttpResponse.getBody());
 
@@ -58,8 +59,12 @@ public class SzvoneLoginRequest extends AbstractLoginRequest {
                 throw new LoginFailedException("登陆失败，原因未知。" + wbpHttpResponse.getBody());
             }
 
+            logger.debug("login successful!");
+
             String cookieFromHeaders = getCookieFromHeaders(wbpHttpResponse.getHeader());
-            cookieContext.setCookie(cookieFromHeaders);
+            cookieContext.saveCookie(cookieFromHeaders);
+
+            logger.debug("save cookie to cache success!");
 
         } catch (IOException e) {
             e.printStackTrace();

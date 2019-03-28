@@ -8,7 +8,7 @@ import java.io.IOException;
  * 无需上层调用者知道具体实现逻辑
  * 只需要简单的get与set即可
  */
-public abstract class AbstractCookieContext {
+public abstract class AbstractCookieContext implements CookieCacheAccessor{
 
     /**
      * 持久层缓存的接口
@@ -26,10 +26,6 @@ public abstract class AbstractCookieContext {
     public AbstractCookieContext() {
         this(new FileCookieCacheAccessor());
     }
-
-    public abstract void setCookie(String cookie) throws IOException;
-
-    public abstract String getCookie() throws IOException;
 
     public CookieCacheAccessor getAccessor() {
         return accessor;

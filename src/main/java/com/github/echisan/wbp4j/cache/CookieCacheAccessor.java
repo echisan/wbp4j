@@ -18,4 +18,6 @@ public interface CookieCacheAccessor {
     void saveCookie(String cookie) throws IOException;
 
     String getCookie() throws IOException;
+
+    void clear() throws IOException;
 }

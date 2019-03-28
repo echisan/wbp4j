@@ -89,8 +89,21 @@ public class FileCookieCacheAccessor implements CookieCacheAccessor {
             }
             return null;
         }
-
+        logger.debug("found cookie cache in cache file.");
         return cookie;
+    }
+
+    @Override
+    public void clear() throws IOException {
+        File file = new File(cacheFileName);
+        if (file.exists()){
+            boolean delete = file.delete();
+            if (delete){
+                logger.debug("clear cache file success!");
+            }else {
+                logger.warn("can not delete cache file,this may cause refresh cookie problem.");
+            }
+        }
     }
 
     /**

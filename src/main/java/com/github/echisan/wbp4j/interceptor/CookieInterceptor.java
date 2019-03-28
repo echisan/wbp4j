@@ -57,8 +57,9 @@ public class CookieInterceptor implements UploadInterceptor {
     @Override
     public void processAfter(UploadResponse uploadResponse) {
         if (uploadResponse.getResult().equals(UploadResponse.ResultStatus.RETRY)){
+            logger.debug("found retry flag,retry upload now");
             try {
-                cookieContext.setCookie("");
+                cookieContext.clear();
             } catch (IOException e) {
                 e.printStackTrace();
             }
