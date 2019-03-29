@@ -11,7 +11,7 @@ public class UploadRequestBuilderTest {
 
     @Test
     public void buildDefault() throws IOException, UploadFailedException {
-        UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("1916152345@qq.com", "Dengzhexuan123");
+        UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("", "");
         UploadResponse response = uploadRequest.upload(new File("F:\\pics\\gopher.png"));
         System.out.println(response);
 
