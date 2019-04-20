@@ -15,8 +15,8 @@
 - 第三方依赖少，仅依赖fastjson，logback
 - 自由度高，一切均可自定义配置
   - 可自定义缓存介质
-  - 可自定义上传失败后的充实策略
-  - 可自定义拦截器添加自己的逻辑
+  - 可[自定义重试策略](https://github.com/echisan/wbp4j/wiki/%E8%87%AA%E5%AE%9A%E4%B9%89%E9%87%8D%E8%AF%95%E7%AD%96%E7%95%A5)
+  - 可自定义[拦截器](https://github.com/echisan/wbp4j/wiki/%E6%8B%A6%E6%88%AA%E5%99%A8)添加自己的逻辑
 - 仍在维护
 
 ## Maven
