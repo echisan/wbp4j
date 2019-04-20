@@ -1,20 +1,26 @@
 # wbp4j
-（第三方）使用Java实现的微博图床API，提供简单的api即可完成上传图片到微博图床，
-可方便集成到自己的项目当中。
+> weibo picture api for java (中二一下)
 
-[文档](https://github.com/echisan/wbp4j/wiki)
+使用Java实现的微博图床API，提供简单的api即可完成上传图片到微博图床，可方便集成到自己的项目当中。
 
-# 简介
-这是个使用了微博图床接口的上传图片的api
+如果有兴趣或奇怪的需求或者想看故事可以查看[说明文档](https://github.com/echisan/wbp4j/wiki)   
+如果出现任何问题欢迎提issue、欢迎提pr   
+如果这个项目帮助到你了欢迎star鼓励一下^^
+
+# 特色
 - 使用方便简单
 - 获取简单，直接加入maven依赖即可
 - cookie缓存
 - cookie过期自动登录
 - 第三方依赖少，仅依赖fastjson，logback
-- 可自定义配置
+- 自由度高，一切均可自定义配置
+  - 可自定义缓存介质
+  - 可自定义上传失败后的充实策略
+  - 可自定义拦截器添加自己的逻辑
+- 仍在维护
 
 ## Maven
-
+引入maven依赖即可
 ```xml
 <dependency>
   <groupId>com.github.echisan</groupId>
@@ -29,7 +35,7 @@
 
 ```java
 UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("your username", "your password");
-UploadResponse response = uploadRequest.upload(new File(""));
+UploadResponse response = uploadRequest.upload(new File("go.png"));
 ```
 
 ### 自定义配置
@@ -110,13 +116,9 @@ class TestController {
 
 
 ## 更新日志
-> 优化了重试代码，修复了重试机制还是不生效的问题 ———— 2019.03.30
-
-> 修复了重试机制不生效的问题 ———— 2019.03.25
-
-> 修复了部署到服务器后无法登陆的问题，修复了返回的图片格式问题 ————2019.03.24
-
-> 重构代码，代码结构更清晰稳定，减低各模块的耦合。修复缓存文件位置错误的问题，修复上传图片格式问题，支持了上传gif————2019.03.23
-
-> 重构了代码，减少第三方依赖，目前只依赖logging，fastjson,将包上传至官方仓库使用更方便————2018.11.08
+> 优化了重试代码，修复了重试机制还是不生效的问题 ———— 2019.03.30  
+> 修复了重试机制不生效的问题 ———— 2019.03.25  
+> 修复了部署到服务器后无法登陆的问题，修复了返回的图片格式问题 ————2019.03.24  
+> 重构代码，代码结构更清晰稳定，减低各模块的耦合。修复缓存文件位置错误的问题，修复上传图片格式问题，支持了上传gif————2019.03.23  
+> 重构了代码，减少第三方依赖，目前只依赖logging，fastjson,将包上传至官方仓库使用更方便————2018.11.08  
 
