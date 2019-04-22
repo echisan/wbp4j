@@ -6,7 +6,7 @@
 
     <groupId>com.github.echisan</groupId>
     <artifactId>wbp4j</artifactId>
-    <version>3.2</version>
+    <version>3.3</version>
 
     <name>wbp4j</name>
     <description>a simple java api for weibo picture bed</description>
