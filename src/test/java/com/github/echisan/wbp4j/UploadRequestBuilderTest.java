@@ -1,7 +1,6 @@
 package com.github.echisan.wbp4j;
 
 import com.github.echisan.wbp4j.exception.UploadFailedException;
-import com.github.echisan.wbp4j.interceptor.UploadInterceptor;
 import org.junit.Test;
 
 import java.io.File;
@@ -11,7 +10,7 @@ public class UploadRequestBuilderTest {
 
     @Test
     public void buildDefault() throws IOException, UploadFailedException {
-        UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("", "");
+        UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("1213123", "123213");
         UploadResponse response = uploadRequest.upload(new File("F:\\pics\\gopher.png"));
         System.out.println(response);
 
@@ -21,21 +20,11 @@ public class UploadRequestBuilderTest {
     public void custom() throws IOException, UploadFailedException {
 
         UploadRequest uploadRequest = UploadRequestBuilder.custom("", "")
-                .setCacheFilename("myCache")
-                .addInterceptor(new UploadInterceptor() {
-                    @Override
-                    public boolean processBefore(UploadAttributes uploadAttributes) {
-                        System.out.println("hello world");
-                        return true;
-                    }
-
-                    @Override
-                    public void processAfter(UploadResponse uploadResponse) {
-
-                    }
-                }).build();
+                .setCacheFilename("F:\\Game\\wbpCache")
+                .build();
 
         UploadResponse uploadResponse = uploadRequest.upload(new File(""));
         System.out.println(uploadResponse);
     }
+
 }

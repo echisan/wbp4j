@@ -16,12 +16,15 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * 当初也拿HttpClient实现过，为了减少依赖，后来删了
  * 采用HttpURLConnection实现
  * <p>
+ *
+ * 总觉得这个header不安全，找个时间改一下
  * Created by echisan on 2018/11/5
  */
 public class DefaultWbpHttpRequest implements WbpHttpRequest {
-    private Map<String, String> header;
+    private final Map<String, String> header;
 
     public DefaultWbpHttpRequest() {
+        this.header = new HashMap<>();
     }
 
     /*

@@ -28,32 +28,21 @@ public class UploadRequestBuilder {
         return new Builder(username, password);
     }
 
-    static class Builder {
-        private CookieCacheAccessor cookieCacheAccessor = new FileCookieCacheAccessor();
-        private AbstractCookieContext abstractCookieContext = new CookieContext(cookieCacheAccessor);
+    public static class Builder {
+        private CookieCacheAccessor cookieCacheAccessor;
+        private AbstractCookieContext abstractCookieContext;
         private List<UploadInterceptor> uploadInterceptors = new ArrayList<>();
-        private AbstractLoginRequest loginRequest = new SzvoneLoginRequest(abstractCookieContext);
+        private AbstractLoginRequest loginRequest;
         private WbpHttpRequest wbpHttpRequest = new DefaultWbpHttpRequest();
         private String username;
         private String password;
         private boolean retryable = true;
         private RetryableUploadRequest retryableUploadRequest;
+        private String cookieFileName = null;
 
         public Builder(String username, String password) {
             this.username = username;
             this.password = password;
-            // init default interceptors
-            InitUploadAttributesInterceptor initUploadAttributesInterceptor =
-                    new InitUploadAttributesInterceptor();
-            CookieInterceptor cookieInterceptor = new CookieInterceptor(abstractCookieContext);
-            LoginInterceptor loginInterceptor = new LoginInterceptor(loginRequest);
-            loginRequest.setUsernamePassword(username, password);
-            ReCheckCookieInterceptor reCheckCookieInterceptor = new ReCheckCookieInterceptor(abstractCookieContext);
-
-            uploadInterceptors.add(initUploadAttributesInterceptor);
-            uploadInterceptors.add(cookieInterceptor);
-            uploadInterceptors.add(loginInterceptor);
-            uploadInterceptors.add(reCheckCookieInterceptor);
         }
 
         public Builder addInterceptor(UploadInterceptor uploadInterceptor) {
@@ -90,9 +79,63 @@ public class UploadRequestBuilder {
         }
 
         public Builder setCacheFilename(String filename) {
-            this.abstractCookieContext = new CookieContext(new FileCookieCacheAccessor(filename));
+            this.cookieFileName = filename;
             return this;
         }
+
+        public Builder setLoginRequest(AbstractLoginRequest loginRequest){
+            if (loginRequest == null){
+                throw new NullPointerException("loginRequest cannot be null");
+            }
+            this.loginRequest = loginRequest;
+            return this;
+        }
+
+        private void buildCookieCacheAccessor(){
+            if (cookieCacheAccessor == null){
+                if (cookieFileName != null){
+                    cookieCacheAccessor = new FileCookieCacheAccessor(cookieFileName);
+                }else {
+                    cookieCacheAccessor = new FileCookieCacheAccessor();
+                }
+            }
+        }
+
+        public WbpHttpRequest getWbpHttpRequest(){
+            assert wbpHttpRequest != null;
+            return wbpHttpRequest;
+        }
+
+        public AbstractCookieContext getCookieContext(){
+            assert abstractCookieContext != null;
+            return abstractCookieContext;
+        }
+
+        private void buildCookieContext(){
+            assert cookieCacheAccessor != null;
+            // build cookieContext finish.
+            abstractCookieContext = new CookieContext(cookieCacheAccessor);
+        }
+
+        private void buildLoginRequest(){
+            if (loginRequest == null){
+                loginRequest = new SzvoneLoginRequest(wbpHttpRequest,abstractCookieContext);
+            }
+            loginRequest.setUsernamePassword(this.username,this.password);
+        }
+
+        private void buildInterceptors(){
+            InitUploadAttributesInterceptor initInterceptor = new InitUploadAttributesInterceptor();
+            CookieInterceptor cookieInterceptor = new CookieInterceptor(abstractCookieContext);
+            buildLoginRequest();
+            LoginInterceptor loginInterceptor = new LoginInterceptor(loginRequest);
+            ReCheckCookieInterceptor recheckInterceptor = new ReCheckCookieInterceptor(abstractCookieContext);
+            this.uploadInterceptors.add(initInterceptor);
+            this.uploadInterceptors.add(cookieInterceptor);
+            this.uploadInterceptors.add(loginInterceptor);
+            this.uploadInterceptors.add(recheckInterceptor);
+        }
+
 
         public UploadRequest build() {
             if (username == null || password == null) {
@@ -100,6 +143,10 @@ public class UploadRequestBuilder {
             }
 
             WbpUploadRequest wbpUploadRequest = new WbpUploadRequest(uploadInterceptors, wbpHttpRequest);
+
+            buildCookieCacheAccessor();
+            buildCookieContext();
+            buildInterceptors();
 
             if (retryable) {
                 if (this.retryableUploadRequest == null) {

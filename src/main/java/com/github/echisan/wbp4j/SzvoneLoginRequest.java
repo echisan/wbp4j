@@ -6,7 +6,6 @@ import com.github.echisan.wbp4j.exception.LoginFailedException;
 import com.github.echisan.wbp4j.http.DefaultWbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpRequest;
 import com.github.echisan.wbp4j.http.WbpHttpResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,19 @@ public class SzvoneLoginRequest extends AbstractLoginRequest {
             logger.debug("responseBody:" + wbpHttpResponse.getBody());
 
             LoginResponseEntity loginResponseEntity = JSON.parseObject(wbpHttpResponse.getBody(), LoginResponseEntity.class);
+
+            if (loginResponseEntity.getRetcode().equals("101")) {
+                LoginFailedResponse loginFailedResponse;
+                String reason;
+                try {
+                    loginFailedResponse = JSON.parseObject(wbpHttpResponse.getBody(), LoginFailedResponse.class);
+                    reason = loginFailedResponse.getReason();
+                } catch (Exception e) {
+                    logger.warn("can not parse str: " + wbpHttpResponse.getBody());
+                    reason = wbpHttpResponse.getBody();
+                }
+                throw new LoginFailedException("登陆失败，原因：" + reason);
+            }
 
             if (!loginResponseEntity.retcode.equals("0")) {
                 throw new LoginFailedException("登陆失败，原因未知。" + wbpHttpResponse.getBody());
@@ -136,6 +148,27 @@ public class SzvoneLoginRequest extends AbstractLoginRequest {
             return this.crossDomainUrlList;
         }
 
+    }
+
+    public static class LoginFailedResponse {
+        private Integer retcode;
+        private String reason;
+
+        public Integer getRetcode() {
+            return retcode;
+        }
+
+        public void setRetcode(Integer retcode) {
+            this.retcode = retcode;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
     }
 
     private String getCookieFromHeaders(Map<String, String> headers) throws LoginFailedException {

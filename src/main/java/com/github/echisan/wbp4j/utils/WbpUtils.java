@@ -39,4 +39,19 @@ public class WbpUtils {
         }
         return null;
     }
+
+    /**
+     * 将unicode字符串转换成人能看懂的字符
+     * @param unicode the unicode string
+     * @return decoded unicode string
+     */
+    public static String decodeUnicode(String unicode) {
+        StringBuilder str = new StringBuilder();
+        String[] hex = unicode.split("\\\\u");
+        for (int i = 1; i < hex.length; i++) {
+            int data = Integer.parseInt(hex[i], 16);
+            str.append((char) data);
+        }
+        return str.length() > 0 ? str.toString() : unicode;
+    }
 }

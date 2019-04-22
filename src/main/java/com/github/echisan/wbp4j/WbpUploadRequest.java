@@ -73,7 +73,16 @@ public class WbpUploadRequest extends AbstractUploadRequest {
                 logger.debug("cookie was expiration");
                 return uploadResponse;
             }
-
+            if (ret == -2) {
+                uploadResponse.setResult(UploadResponse.ResultStatus.FAILED);
+                uploadResponse.setMessage("上传的图片为空");
+                return uploadResponse;
+            }
+            if (ret == -11) {
+                uploadResponse.setResult(UploadResponse.ResultStatus.FAILED);
+                uploadResponse.setMessage("上传的图片格式不正确");
+                return uploadResponse;
+            }
             if (ret != 1) {
                 uploadResponse.setMessage("未知问题，retCode=" + ret + "可自行搜索该ret寻求结果");
                 return uploadResponse;

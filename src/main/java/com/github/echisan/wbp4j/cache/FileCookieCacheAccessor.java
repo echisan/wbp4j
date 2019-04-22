@@ -58,7 +58,7 @@ public class FileCookieCacheAccessor implements CookieCacheAccessor {
         bw.flush();
         bw.close();
         if (logger.isDebugEnabled()) {
-            logger.debug("write cookie to file success!! filePath: [" + file.getPath() + " ].");
+            logger.debug("write cookie to file success!! filePath: [" + file.getAbsolutePath() + " ].");
         }
     }
 
@@ -73,7 +73,7 @@ public class FileCookieCacheAccessor implements CookieCacheAccessor {
         File file = new File(cacheFileName);
         if (!file.exists()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("can not find cookie cache file. filePath: [ " + file.getPath() + "]. ");
+                logger.debug("can not find cookie cache file. filePath: [ " + file.getAbsolutePath() + "]. ");
             }
             return null;
         }
@@ -85,11 +85,11 @@ public class FileCookieCacheAccessor implements CookieCacheAccessor {
             logger.info("because the cookie length less 50,assert this cookie is not correct!");
             boolean delete = file.delete();
             if (!delete) {
-                throw new IOException("could not delete the incorrect cookie file!! filePath:[ " + file.getPath() + " ].");
+                throw new IOException("could not delete the incorrect cookie file!! filePath:[ " + file.getAbsolutePath() + " ].");
             }
             return null;
         }
-        logger.debug("found cookie cache in cache file.");
+        logger.debug("found cookie cache in cache file. [" + file.getAbsolutePath()+" ]");
         return cookie;
     }
 
