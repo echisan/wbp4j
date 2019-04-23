@@ -25,7 +25,7 @@
 <dependency>
   <groupId>com.github.echisan</groupId>
   <artifactId>wbp4j</artifactId>
-  <version>3.2</version>
+  <version>3.3</version>
 </dependency>
 ```
 
@@ -116,6 +116,7 @@ class TestController {
 
 
 ## 更新日志
+> 修复了修改缓存文件名不生效的问题，增加了登陆失败返回的信息以及对unicode的解码 ———— 2019.04.23
 > 优化了重试代码，修复了重试机制还是不生效的问题 ———— 2019.03.30  
 > 修复了重试机制不生效的问题 ———— 2019.03.25  
 > 修复了部署到服务器后无法登陆的问题，修复了返回的图片格式问题 ————2019.03.24  
