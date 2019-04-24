@@ -33,6 +33,7 @@
 
 ### 使用默认配置
 **这个方式只做演示，请不要每次调用上传接口都使用UploadRequestBuilder build一次**
+build()方法会初始化所有的`CookieContext` `WbpHttpRequest` `LoginRequest` `Interceptor列表`等等，但是这些东西只需初始化一次，之后便是对cookie的管理。
 
 ```java
 UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("your username", "your password");
