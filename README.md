@@ -32,11 +32,35 @@
 ## 用法
 
 ### 使用默认配置
+**这个方式只做演示，请不要每次调用上传接口都使用UploadRequestBuilder build一次**
 
 ```java
 UploadRequest uploadRequest = UploadRequestBuilder.buildDefault("your username", "your password");
 UploadResponse response = uploadRequest.upload(new File("go.png"));
 ```
+
+**建议写成单例，在有需要的时候拿到UploadRequest对象调用upload方法即可**
+
+```java
+public enum  UploadUtils {
+    INSTANCE;
+
+    private UploadRequest uploadRequest;
+
+    UploadUtils() {
+        uploadRequest = UploadRequestBuilder.buildDefault("yourUsername","yourPassword");
+    }
+
+    public UploadResponse upload(File file) throws IOException, UploadFailedException {
+        return uploadRequest.upload(file);
+    }
+    
+    public UploadRequest getUploadRequest(){
+        return this.uploadRequest;
+    }
+}
+```
+
 
 ### 自定义配置
 支持自定义拦截器，具体查看文档
